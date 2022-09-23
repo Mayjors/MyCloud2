@@ -1,0 +1,15 @@
+server:
+  port: 8181
+
+spring:
+  application:
+    name: provider-server
+
+eureka:
+  client:
+    #获取注册服务
+    fetch-registry: false
+    #注册在eureka上
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
