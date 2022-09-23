@@ -10,6 +10,8 @@
     <modules>
         <module>provider-server</module>
         <module>eureka-server</module>
+        <module>consumer-server</module>
+        <module>algorithm</module>
     </modules>
 
     <properties>
