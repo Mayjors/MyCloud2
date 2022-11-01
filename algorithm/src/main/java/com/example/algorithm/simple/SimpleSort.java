@@ -7,6 +7,7 @@ import java.util.Deque;
 public class SimpleSort {
     public static void main(String[] args) {
         int[] arr = {10, 7, 2, 4, 7, 62, 3, 4, 2, 1, 8, 9, 19};
+//        int[] arr = {4, 2, 8, 5, 9, 62};
         System.out.println(Arrays.toString(arr));
 //        quickSort(arr, 0, arr.length-1);
 //        System.out.println(Arrays.toString(arr));
@@ -20,7 +21,9 @@ public class SimpleSort {
 //        System.out.println(Arrays.toString(arr));
 //        insertSortBS(arr);
 //        System.out.println(Arrays.toString(arr));
-        shellSort(arr);
+//        shellSort(arr);
+//        System.out.println(Arrays.toString(arr));
+        heapSort(arr);
         System.out.println(Arrays.toString(arr));
     }
 
@@ -279,6 +282,79 @@ public class SimpleSort {
         }
     }
 
+    public static void heapSort(int[] arr) {
+        int temp;
+        for (int i=arr.length / 2-1;  i >=0; i--) {
+//            adjustHeap(arr, i, arr.length);
+            adjustHeap2(arr, i, arr.length);
+        }
+
+        System.out.println("排序后=" + Arrays.toString(arr));
+        /**
+         * 将对顶元素与末尾元素交换，将最大元素"沉"到数组末尾
+         * 重新调整结构，使其满足堆定义，然后继续交换对顶元素与当前末尾元素，反复执行调整+交换，直到整个序列有序
+         */
+        for (int j = arr.length-1; j>0; j--) {
+            System.out.println("剩余数据量为" + (j + 1));
+            temp = arr[j];
+            arr[j] = arr[0];
+            arr[0] = temp;
+            System.out.println("排序后=" + Arrays.toString(arr));
+//            adjustHeap(arr, 0, j);
+            adjustHeap2(arr, 0, j);
+            System.out.println("调整后=" + Arrays.toString(arr));
+        }
+    }
+
+    /**
+     * 将一个数组调整成一个大根堆
+     * @param arr
+     * @param i
+     * @param length
+     */
+    private static void adjustHeap(int[] arr, int i, int length) {
+        // 先取出当前元素值，保存在临时变量
+        int temp = arr[i];
+        // 开始调整
+        // 说明：k= i*2 +1k 是i结点的左子节点
+        for (int k = i*2 + 1; k < length; k=k * 2+1) {
+            if (k+1 < length && arr[k] < arr[k+1]) {
+                k++;
+            }
+            if (arr[k] > temp) {
+                arr[i] = arr[k];
+                i = k;
+            } else {
+                break;
+            }
+        }
+        arr[i] = temp;
+    }
+
+    private static void adjustHeap2(int[] arr, int i, int length) {
+        int temp = arr[i];
+        //1. k = i * 2 + 1 k 是 i结点的左子结点
+        for (int j = i * 2 + 1; j < length; j = j * 2 + 1) {
+            //说明左子结点的值小于右子结点的值。j指向右节点。本质就是找到左右节点中的较大值
+            if (j + 1 < length && arr[j] < arr[j + 1]) {
+                j++;
+            }
+            //如果子结点大于父结点
+            if (arr[j] > temp) {
+                //把较大的值赋给当前结点
+                arr[i] = arr[j];
+                //!!! i 指向 k,继续循环比较
+                i = j;
+            } else {
+                /*
+                 * 下面break的理解至关重要。上面调用方法两次提到这里！注意看上面解释！
+                 */
+                break;
+            }
+        }
+        //当for 循环结束后，我们已经将以i 为父结点的树的最大值，放在了 最顶(局部)。并且给temp找到了合适为位置(当前i的位置)
+        arr[i] = temp;
+    }
     
     public static void swap(int[] arr, int a, int b) {
         int temp = arr[a];
