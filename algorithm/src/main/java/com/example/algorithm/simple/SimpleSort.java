@@ -25,6 +25,7 @@ public class SimpleSort {
 //        System.out.println(Arrays.toString(arr));
         heapSort(arr);
         System.out.println(Arrays.toString(arr));
+//        heapSortNew(arr);
     }
 
     /**
@@ -354,6 +355,44 @@ public class SimpleSort {
         }
         //当for 循环结束后，我们已经将以i 为父结点的树的最大值，放在了 最顶(局部)。并且给temp找到了合适为位置(当前i的位置)
         arr[i] = temp;
+    }
+
+    public static void adjustHeap3(int[] arr) {
+        for (int i= arr.length-1; i>=2; i--) {
+            // 构建大顶堆
+            // 先从第一个非叶子节点开始，与孩子节点作比较
+            for (int j=(i-1)/2; j>=0; j--) {
+                int l = 2*j +1, r = 2*j+2;
+                if (r <=i && arr[j] < arr[r]) {
+                    swap(arr, j, r);
+                }
+                if (arr[j] < arr[l]) {
+                    swap(arr, j, l);
+                }
+            }
+        }
+    }
+
+    public static void heapSortNew(int[] num) {
+        int array[] = {2 , 5 , 10 , 9 ,12 ,30 ,23 ,48 ,59 ,29 ,4 ,11 ,22 ,54 ,25 ,88 ,90 ,6} ;
+        System.out.print("未排序数组：");
+        for(int i : array) System.out.print(" " + i);
+        System.out.print("\n");
+        // 取出前10个构建大顶堆
+        int arr[] = new int[10];
+        for (int i=0; i<=9; i++) {
+            arr[i] = array[i];
+        }
+        adjustHeap3(arr);
+        // 从第11个数开始逐个与堆顶元素进行比较，小于堆顶元素则入堆，重新构建大顶堆
+        for (int k=10; k<=array.length-1; k++) {
+            if (array[k] < arr[0]) {
+                arr[0] = array[k];
+                adjustHeap3(arr);
+            }
+        }
+        System.out.print("最小的10个数：");
+        for(int i = 0 ; i<=9 ;i++) System.out.print(" " + arr[i]);
     }
     
     public static void swap(int[] arr, int a, int b) {

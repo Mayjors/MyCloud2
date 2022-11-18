@@ -53,8 +53,7 @@ public class LruCache3<V> {
             if (table.size() == capacity) {
                 // 超过容量，首先移除尾部的节点
                 table.remove(tail.prev.key);
-                tail.prev = tail.next;
-                tail.next = null;
+                tail.prev.next = tail.next;
                 tail = tail.prev;
             }
             node = new ListNode<>(key, value);
@@ -95,6 +94,6 @@ public class LruCache3<V> {
         cache.put("key5", node5);
         cache.put("key5", node5);
         cache.get("key2");
-        System.out.println(cache.get("key1"));
+        System.out.println(cache.get("key2").value);
     }
 }
