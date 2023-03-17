@@ -6,10 +6,31 @@ import java.util.*;
 
 public class Simple {
     public static void main(String[] args) {
-        TreeNode root = buildTree(new int[]{3,9,20,15,7}, new int[]{9,3,15,20,7});
-        System.out.println(root);
-        int s = cuttingRope(3);
-        System.out.println(s);
+//        TreeNode root = buildTree(new int[]{3,9,20,15,7}, new int[]{9,3,15,20,7});
+//        System.out.println(root);
+//        int s = cuttingRope(3);
+//        System.out.println(s);
+        validParentheses("");
+    }
+
+    public static boolean validParentheses(String parens) {
+        // 在这⾥写代码
+        if(parens == null || parens.length() ==0) {
+            return false;
+        }
+        Stack stack = new Stack();
+        String[] arr = parens.split("");
+        for(int i=0; i<parens.length(); i++) {
+            if(arr[i] == "(") {
+                stack.push(arr[i]);
+            } else if(stack.size() >0) {
+                stack.pop();
+            } else {
+                return false;
+            }
+        }
+
+        return stack.size() ==0;
     }
 
     /**
@@ -489,6 +510,15 @@ public class Simple {
             j=i;
         }
         return res.toString().trim();
+    }
+
+    /**
+     * 剑指 Offer 38. 字符串的排列
+     * @param s
+     * @return
+     */
+    public String[] permutation(String s) {
+        return null;
     }
 }
 
