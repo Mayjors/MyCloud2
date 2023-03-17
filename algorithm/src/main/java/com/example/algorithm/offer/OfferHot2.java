@@ -25,8 +25,6 @@ public class OfferHot2 {
         l4.next = l1;
         l1.next = l3;
 
-        sortList(l2);
-
         hammingWeight(00000000000000000000000000001011);
         findDuplicate(new int[]{1, 3, 4, 2, 2});
         findRepeatNumber(new int[]{3, 4, 2, 1, 1, 0});
@@ -47,6 +45,7 @@ public class OfferHot2 {
         ll3.next = ll4;
         ll4.next = ll5;
         rotateRight3(ll1, 2);
+        System.out.println(isMatch("()("));
     }
 
     public static long mul(long a, long k) {
@@ -137,6 +136,31 @@ public class OfferHot2 {
                 backtrack(combinations, phoneMap, digits, index + 1, combination);
                 combination.deleteCharAt(index);
             }
+        }
+    }
+
+    /**
+     * 匹配括号
+     * @param str
+     * @return
+     */
+    public static boolean isMatch(String str) {
+        Stack<Character> chars = new Stack<>();
+        for (int i = 0; i < str.length(); i++) {
+            char currChar = str.charAt(i);
+            if (currChar == '(') {
+                chars.push(currChar);
+            } else if (currChar == ')') {
+                Character t = chars.pop();
+                if (t != '(') {
+                    return false;
+                }
+            }
+        }
+        if (chars.size() == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
