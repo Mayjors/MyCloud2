@@ -1,6 +1,7 @@
 package com.example.algorithm.offer;
 
 import java.util.*;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 public class OfferHot3 {
     public static void main(String[] args) {
@@ -42,6 +43,15 @@ public class OfferHot3 {
 
         longestPalindrome3("babad");
         nextPermutation(new int[]{1, 2, 3});
+
+        ListNode node = new ListNode(4);
+        ListNode node2 = new ListNode(5);
+        ListNode node3 = new ListNode(1);
+        ListNode node4 = new ListNode(9);
+        node.next = node2;
+        node2.next = node3;
+        node3.next = node4;
+        deleteNode(node, 5);
     }
 
     /**
@@ -137,6 +147,61 @@ public class OfferHot3 {
     }
 
     /**
+     * 23. 合并K个升序链表
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        int k = lists.length;
+        ListNode dummyHead = new ListNode(0);
+        ListNode tail = dummyHead;
+        while (true) {
+           ListNode minNode = null;
+           int minPointer = -1;
+           for (int i=0; i<k; i++) {
+               if (lists[i] == null) {
+                   continue;
+               }
+               if (minNode == null || lists[i].val < minNode.val) {
+                   minNode = lists[i];
+                   minPointer = i;
+               }
+           }
+           if (minPointer == -1) {
+               break;
+           }
+           tail.next = minNode;
+           tail = tail.next;
+           lists[minPointer] = lists[minPointer].next;
+        }
+        return dummyHead.next;
+    }
+
+    /**
+     * 56. 合并区间
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        // 先按照区间起始位置排序
+        Arrays.sort(intervals, (v1, v2) -> v1[0] - v2[0]);
+        // 遍历区间
+        int[][] res = new int[intervals.length][2];
+        int idx = -1;
+        for (int[] interval: intervals) {
+            // 如果结果数组是空的，或者当前区间的起始位置 > 结果数组中最后区间的终止位置，
+            // 则不合并，直接将当前区间加入结果数组。
+            if (idx == -1 || interval[0] > res[idx][1]) {
+                res[++idx] = interval;
+            } else {
+                // 反之将当前区间合并至结果数组的最后区间
+                res[idx][1] = Math.max(res[idx][1], interval[1]);
+            }
+        }
+        return Arrays.copyOf(res, idx + 1);
+    }
+
+    /**
      * 26. 删除有序数组中的重复项
      *
      * @param nums
@@ -172,6 +237,26 @@ public class OfferHot3 {
         digits = new int[digits.length + 1];
         digits[0] = 1;
         return digits;
+    }
+
+    /**
+     * 删除链表的节点
+     * @param head
+     * @param val
+     * @return
+     */
+    public static ListNode deleteNode(ListNode head, int val) {
+        if (head == null) return null;
+        if (head.val == val) return head.next;
+        ListNode cur = head;
+        while (cur.next != null) {
+            if (cur.next.val == val) {
+                cur.next = cur.next.next;
+                break;
+            }
+            cur = cur.next;
+        }
+        return head;
     }
 
     /**
@@ -475,6 +560,25 @@ public class OfferHot3 {
             m[s.charAt(j)] = j+1;
         }
         return len;
+    }
+
+    /**
+     * 11. 盛最多水的容器
+     * @param height
+     * @return
+     */
+    public int maxArea(int[] height) {
+        int i=0, j=height.length-1, res = 0;
+        while(i<j) {
+            if(height[i] < height[j]) {
+                res = Math.max(res, (j-i) * height[i]);
+                i++;
+            } else {
+                res = Math.max(res, (j-i) * height[j]);
+                j--;
+            }
+        }
+        return res;
     }
 
     /**
@@ -889,8 +993,78 @@ public class OfferHot3 {
                 return;
             }
         }
-        Arrays.sort(nums);
+//        Arrays.sort(nums);
     }
+
+    /**
+     * 46. 全排列
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> permute(int[] nums) {
+        return null;
+    }
+
+    /**
+     * 39. 组合总和
+     * 输入：candidates = [2,3,6,7], target = 7
+     * 输出：[[2,2,3],[7]]
+     * @param candidates
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        int len = candidates.length;
+        List<List<Integer>> res = new ArrayList<>();
+        if (len == 0) {
+            return res;
+        }
+
+        Deque<Integer> path = new ArrayDeque<>();
+        dfs(candidates, 0, len, target, path, res);
+        return res;
+    }
+
+    private void dfs(int[] candidates, int begin, int len, int target, Deque<Integer> path, List<List<Integer>> res) {
+        if (target < 0) {
+            return;
+        }
+        if (target == 0) {
+            res.add(new ArrayList<>(path));
+            return;
+        }
+
+        for (int i = begin; i < len; i++) {
+            path.addLast(candidates[i]);
+            System.out.println("递归之前 => " + path + "，剩余 = " + (target - candidates[i]));
+
+            dfs(candidates, i, len, target - candidates[i], path, res);
+
+            path.removeLast();
+            System.out.println("递归之后 => " + path);
+        }
+    }
+
+    /**
+     * 55. 跳跃游戏
+     * @param nums
+     * @return
+     */
+    public static boolean canJump(int[] nums) {
+        if (nums == null) return false;
+        // 前n-1个元素能够跳到的最远距离
+        int k =0;
+        for (int i=0; i<=k; i++) {
+            // 第i个元素能够跳到的最远距离
+            int temp = i + nums[i];
+            k = Math.max(k, temp);
+            if (k >= nums.length-1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 128. 最长连续序列
@@ -958,6 +1132,27 @@ public class OfferHot3 {
             left = left.left;
         }
         return root;
+    }
+
+    /**
+     * 64. 最小路径和
+     * @param grid
+     * @return
+     */
+    public int minPathSum(int[][] grid) {
+        for (int i=0; i<grid.length; i++) {
+            for (int j=0; j<grid[0].length; j++) {
+                if (i==0 && j==0) continue;
+                else if (i==0) {
+                    grid[i][j] = grid[i][j-1] + grid[i][j];
+                } else if (j == 0) {
+                    grid[i][j] = grid[i-1][j] + grid[i][j];
+                } else {
+                    grid[i][j] = Math.min(grid[i-1][j], grid[i][j-1]) + grid[i][j];
+                }
+            }
+        }
+        return grid[grid.length-1][grid[0].length-1];
     }
 
     /**
