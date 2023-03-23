@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    username: root
+    password: 219314
+    #url中database为对应的数据库名称
+    url: jdbc:mysql://localhost:3306/database?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 0
+    password:
+    host: localhost
+    port: 6379
+    connect-timeout: 5000
+    jedis:
+      pool:
+        max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1  # 连接池最大阻塞等待时间(使用负值表示没有限制)
+        max-idle: 8
+        min-idle: 0
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.example.demo.entity
+
+#showSql
+logging:
+  level:
+    com.example.demo.mapper: debug
