@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.User;
+import com.example.demo.service.DemoService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private DemoService demoService;
 
     //通过用户id获取用户所有信息
     //    http://localhost:8080/testBoot/getUser/1(此处1为要获取的id）
@@ -21,6 +24,7 @@ public class UserController {
     //    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
     @ResponseBody
     public User GetUser(@PathVariable int id) {
+        demoService.test();
         return userService.getUserInfo(id);
     }
 

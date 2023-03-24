@@ -1,11 +1,19 @@
 package com.example.algorithm.thread;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 
 public class ContextSwitchDemo {
     public static void main(String[] args) {
+
+        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+        singleThreadExecutor.submit(new Thread());
+
         ThreadLocal<Object> threadLocal = new ThreadLocal<>();
         threadLocal.set("xxx");
         threadLocal.get();
@@ -16,6 +24,7 @@ public class ContextSwitchDemo {
         //运行单线程
         SerialTester test2 = new SerialTester();
         test2.Start();
+
     }
 
     public static class MultiThreadTester extends ThreadContextSwitchTester {

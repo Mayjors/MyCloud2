@@ -52,6 +52,7 @@ public class OfferHot3 {
         node2.next = node3;
         node3.next = node4;
         deleteNode(node, 5);
+        findDisappearedNumbers(new int[]{4,3,2,7,8,2,3,1});
     }
 
     /**
@@ -340,6 +341,29 @@ public class OfferHot3 {
     }
 
     /**
+     * 905. 按奇偶排序狐族
+     * @param nums
+     * @return
+     */
+    public int[] sortArrayByParity(int[] nums) {
+        int left =0, right = nums.length-1;
+        while (left < right) {
+            while (left<right && (nums[left] &1) == 0) {
+                left++;
+            }
+            while (left<right && (nums[right]&1) == 1) {
+                right--;
+            }
+            if (left < right) {
+                swap(nums, left, right);
+                left++;
+                right--;
+            }
+        }
+        return nums;
+    }
+
+    /**
      * 206. 反转链表
      *
      * @param head
@@ -466,6 +490,8 @@ public class OfferHot3 {
 
     /**
      * 2. 两数相加
+     * 输入：l1 = [2,4,3], l2 = [5,6,4]
+     * 输出：[7,0,8]
      * @param l1
      * @param l2
      * @return
@@ -548,6 +574,8 @@ public class OfferHot3 {
 
     /**
      * 3. 无重复字符的最长子串
+     * 输入: s = "abcabcbb"
+     * 输出: 3
      * @param s
      * @return
      */
@@ -560,6 +588,79 @@ public class OfferHot3 {
             m[s.charAt(j)] = j+1;
         }
         return len;
+    }
+
+    public static int lengthOfLongestSubstring2(String s) {
+        HashMap<Character, Integer> map = new HashMap<>();
+        // 滑动窗口左指针
+        int left = 0, maxLen = 0;
+        for (int i=0; i<s.length(); i++) {
+            // 先判断当前字符是否包含在map中，如果不包含添加
+            // 如果包含则 1、字符串在当前有效字段中 如abca，更新left=get(0)+1=1，有效字段为bca
+            // 2、当前字段不包含在当前有效字段中
+            if (map.containsKey(s.charAt(i))) {
+                left = Math.max(left, map.get(s.charAt(i)) +1);
+            }
+            map.put(s.charAt(i), i);
+            maxLen = Math.max(maxLen, i-left+1);
+        }
+        return maxLen;
+    }
+
+    /**
+     * 4. 寻找两个正序数组的中位数
+     * 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
+     * 输入：nums1 = [1,3], nums2 = [2]
+     * 输出：2.00000
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        int left = (n+m+1)/2;
+        int right = (n+m+2)/2;
+        // 将偶数和奇数的情况合并，如果是奇数，会球两次同样的k
+        return (getKth(nums1,   0, m-1, nums2, 0, n-1, left) + getKth(nums1, 0, m-1, nums2, 0, n-1, right)) * 0.5;
+    }
+
+    private int getKth(int[] nums1, int start1, int end1, int[] nums2, int start2, int end2, int k) {
+        int len1 = end1-start1+1;
+        int len2 = end2-start2+1;
+        if (len1 > len2) return getKth(nums2, start2, end2, nums1, start1, end1, k);
+        if (len1 == 0) return nums2[start2+k-1];
+        if (k == 1) return Math.min(nums1[start1], nums2[start2]);
+
+        int i = start1 + Math.min(len1, k/2) -1;
+        int j = start2 + Math.min(len2, k/2) -1;
+
+        if (nums1[i] > nums2[j]) {
+            return getKth(nums1, start1, end1, nums2, j+1, end2, k-(j-start2+1));
+        } else {
+            return getKth(nums1, i+1, end1, nums2, start2, end2, k-(i-start1+1));
+        }
+    }
+
+    /**
+     * 448. 找到所有数组中消失的数字
+     * @param nums
+     * @return
+     */
+    public static List<Integer> findDisappearedNumbers(int[] nums) {
+        List<Integer> res = new ArrayList<>();
+        boolean[] b = new boolean[nums.length+1];
+        for (int i =0; i< nums.length; i++) {
+            if (!b[nums[i]]) {
+                b[nums[i]] = true;
+            }
+        }
+        for (int i=1; i<nums.length; i++) {
+            if (!b[i]) {
+                res.add(i);
+            }
+        }
+        return res;
     }
 
     /**

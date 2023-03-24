@@ -12,6 +12,7 @@
         <module>eureka-server</module>
         <module>consumer-server</module>
         <module>algorithm</module>
+        <module>demo</module>
     </modules>
 
     <properties>

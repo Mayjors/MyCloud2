@@ -62,7 +62,7 @@ public class SystemLogAspect {
                     request = getHttpServletRequest();
                     requestPath = request.getServletPath();
                     HttpSession session = request.getSession();
-                    user = session.getAttribute("userName").toString();
+                    user = session.getAttribute("id").toString();
                     title = method.getAnnotation(OperationAnnotation.class).content();
                     action = method.getAnnotation(OperationAnnotation.class).action();
                     sysType = method.getAnnotation(OperationAnnotation.class).sysType();

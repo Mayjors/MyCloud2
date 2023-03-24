@@ -1,8 +1,104 @@
 package com.example.algorithm.offer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Medium {
     public static void main(String[] args) {
+//        singleNumbers(new int[]{4,3,4});
+        findContinuousSequence(9);
+    }
 
+    /**
+     * 剑指 Offer 57 - II. 和为s的连续正数序列
+     * @param target
+     * @return
+     */
+    public static int[][] findContinuousSequence(int target) {
+        int i=1, j=2, s=3;
+        List<int[]> res = new ArrayList<>();
+        while (i<j) {
+            if (s == target) {
+                int[] ans = new int[j-i+1];
+                for (int k =i; k<=j; k++) {
+                    ans[k-i] = k;
+                }
+                res.add(ans);
+            }
+            if (s >= target) {
+                s-=i;
+                i++;
+            }else {
+                j++;
+                s+=j;
+            }
+        }
+        return res.toArray(new int[0][]);
+    }
+
+    /**
+     * 剑指 Offer 56 - I. 数组中数字出现的次数
+     * @param nums
+     * @return
+     */
+    public static int[] singleNumbers(int[] nums) {
+        int x= 0;
+        for (int num : nums) {
+            x ^= num;
+        }
+        return new int[]{x};
+    }
+
+    /**
+     * 剑指 Offer 11. 旋转数组的最小数字
+     * @param numbers
+     * @return
+     */
+    public int minArray(int[] numbers) {
+        int n=numbers.length;
+        int l =0, r=n-1;
+        while (l<r && numbers[0] == numbers[r]) {
+            r--;
+        }
+        while (l<r) {
+            int mid= l+r+1 >>1;
+            if (numbers[mid] >= numbers[0]){
+                l=mid;
+            } else {
+                r = mid-1;
+            }
+        }
+        return l+1 < n ? numbers[l+1]: numbers[0];
+    }
+
+    /**
+     * 剑指 Offer 07. 重建二叉树
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        TreeNode root = build(preorder, inorder, 0, preorder.length-1, 0, inorder.length-1);
+        return root;
+    }
+
+    public TreeNode build(int[] preorder, int[] inorder, int preStart, int preEnd, int inStart, int inEnd) {
+        if (preStart > preEnd || inStart > inEnd) {
+            return null;
+        }
+        int val = preorder[preStart];
+        TreeNode root = new TreeNode(val);
+        int index = 0;
+        for (int i=inStart; i<inEnd; i++) {
+            if (inorder[i]==val) {
+                index = i;
+                break;
+            }
+        }
+        int leftSize = index-inStart;
+        root.left = build(preorder, inorder, preStart+1, preStart+leftSize, inStart, index-1);
+        root.right = build(preorder, inorder, preStart+leftSize, preEnd, index+1, inEnd);
+        return root;
     }
 
     /**
