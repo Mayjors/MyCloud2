@@ -53,6 +53,7 @@ public class OfferHot3 {
         node3.next = node4;
         deleteNode(node, 5);
         findDisappearedNumbers(new int[]{4,3,2,7,8,2,3,1});
+        subarraySum2(new int[]{1, 2, 3}, 3);
     }
 
     /**
@@ -519,6 +520,59 @@ public class OfferHot3 {
             cur.next = new ListNode(carry);
         }
         return pre.next;
+    }
+
+    /**
+     * 461. 汉明距离
+     * @param x
+     * @param y
+     * @return
+     */
+    public int hammingDistance(int x, int y) {
+        int s = x^y, ret = 0;
+        while (s != 0) {
+            ret += s&1;
+            s>>=1;
+        }
+        return ret;
+    }
+
+    /**
+     * 560. 和为 K 的子数组
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static int subarraySum(int[] nums, int k) {
+        int len = nums.length;
+        int count =0;
+        for (int left = 0; left<len; left++) {
+            int sum = 0;
+            for (int right = left; right<len; right++) {
+                sum +=nums[right];
+                if (sum == k) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static int subarraySum2(int[] nums, int k) {
+        int len = nums.length;
+        int[] preSum = new int[len+1];
+        for (int i=0; i<len; i++) {
+            preSum[i+1] = preSum[i] + nums[i];
+        }
+        int count = 0;
+        for (int left =0; left<len; left++) {
+            for (int right = left; right<len; right++) {
+                if (preSum[right+1] - preSum[left] == k) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     /**
@@ -1065,6 +1119,57 @@ public class OfferHot3 {
             }
         }
         return res;
+    }
+
+    /**
+     * 617. 合并二叉树
+     * @param root1
+     * @param root2
+     * @return
+     */
+    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {
+        if (root1 == null || root2 == null) return root1 == null ? root2 : root1;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root1);
+        queue.add(root2);
+        while (queue.size() >0) {
+            TreeNode r1 = queue.poll();
+            TreeNode r2 = queue.poll();
+            r1.val += r2.val;
+            if (r1.left != null && r2.left != null) {
+                queue.add(r1.left);
+                queue.add(r2.left);
+            } else if (r1.left == null) {
+                r1.left = r2.left;
+            }
+            if (r1.right != null && r2.right != null) {
+                queue.add(r1.right);
+                queue.add(r2.right);
+            } else if (r1.right == null) {
+                r1.right = r2.right;
+            }
+        }
+        return root1;
+    }
+
+    /**
+     *
+     * @param root
+     * @param k
+     * @return
+     */
+    public int kthSmallest(TreeNode root, int k) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        while (root != null || !queue.isEmpty()) {
+            while (root != null) {
+                queue.add(root);
+                root = root.left;
+            }
+            root = queue.poll();
+            if (--k ==0) return root.val;
+            root = root.right;
+        }
+        return -1;
     }
 
     /**
