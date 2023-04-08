@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
-@Service
+//@Service
 public class RedisLockServiceImpl extends ServiceImpl<StockMapper, Stock> implements RedisLockService {
     @Resource
     private UserMapper userMapper;

@@ -54,6 +54,8 @@ public class OfferHot3 {
         deleteNode(node, 5);
         findDisappearedNumbers(new int[]{4,3,2,7,8,2,3,1});
         subarraySum2(new int[]{1, 2, 3}, 3);
+
+        findKthLargest(new int[]{3,2,1,5,6,4}, 2);
     }
 
     /**
@@ -970,6 +972,92 @@ public class OfferHot3 {
             nums[tmp] = tmp;
         }
         return -1;
+    }
+
+    /**
+     * 215. 数组中的第K个最大元素
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static int findKthLargest(int[] nums, int k) {
+        // 数组的最值初始化
+        int min = nums[0];
+        int max = nums[0];
+        for(int i : nums){
+            // 遍历数组获取最值
+            if(i < min){
+                min = i;
+            }
+            if(i > max){
+                max = i;
+            }
+        }
+
+        // 利用最值造数组大小(造数组hash表)
+        //hash表的长度为 max-min+1 即i - min都在这个范围内
+        int[] hash = new int[max - min + 1];
+
+        for(int i : nums){
+            // i - min一定在 max - min + 1 范围 让i-min存入hash
+            // 且这个hash有顺序 末尾位置的最大
+            hash[i - min]++;
+        }
+
+        //求第k个最大值 从末尾开始遍历hash
+        for(int i = max - min; i >= 0; i--){
+            // hash 的值记录着个数
+            k -= hash[i];
+            // 当减完当前位置的个数少于0时 说明要取的值在这个位置
+            if(k <= 0){
+                // 当前这个位置索引 + min得到第k个最大值
+                return i + min;
+            }
+        }
+        // 若上述没有return说明每个值都一样
+        return nums[0];
+    }
+
+    /**
+     * 75. 颜色分类
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        int len = nums.length;
+        if(len < 2) return;
+        int zero = 0;
+        int two = len;
+        int i=0;
+        while(i<two) {
+            if(nums[i] == 0) {
+                swap(nums, i, zero);
+                zero++;
+                i++;
+            } else if(nums[i] == 1) {
+                i++;
+            } else {
+                two--;
+                swap(nums, i, two);
+            }
+        }
+    }
+
+    /**
+     * 96. 不同的二叉搜索树
+     * 给你一个整数 n ，求恰由 n 个节点组成且节点值从 1 到 n 互不相同的 二叉搜索树 有多少种？返回满足题意的二叉搜索树的种数。
+     * @param n
+     * @return
+     */
+    public int numTrees(int n) {
+        int[] G = new int[n+1];
+        G[0] = 1;
+        G[1] = 1;
+        for (int i =2; i<=n; i++) {
+            for (int j=1; j<=i; j++) {
+                G[i] += G[j-1]*G[i-j];
+            }
+        }
+        return G[n];
     }
 
     /**

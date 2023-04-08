@@ -8,12 +8,14 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.client.RestTemplate;
 
 @MapperScan(basePackages = "com.example.consumerserver.mapping")
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
+@EnableAspectJAutoProxy
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class) //排除掉数据库自动加载
 public class ConsumerServerApplication {
 
