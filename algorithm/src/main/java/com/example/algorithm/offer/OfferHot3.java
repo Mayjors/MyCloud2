@@ -460,6 +460,29 @@ public class OfferHot3 {
     }
 
     /**
+     * 7. 整数反转
+     * @param x
+     * @return
+     */
+    public int reverse(int x) {
+        int res= 0;
+        while (x != 0) {
+            int temp = x%10;
+            // 判断是否大于最大32位整数
+            if (res > 214748364 || (res == 214748364 && temp >7)) {
+                return 0;
+            }
+            // 判断是否小妤 最小32位整数
+            if (res < -214748364 || (res == -214748364 && temp < -8)) {
+                return 0;
+            }
+            res = res * 10 + temp;
+            x /= 10;
+        }
+        return res;
+    }
+
+    /**
      * 350. 两个数组的交集 II
      * @param nums1
      * @param nums2
@@ -820,6 +843,34 @@ public class OfferHot3 {
     }
 
     /**
+     * 中心扩散
+     * @param s
+     * @return
+     */
+    public static String longestPalindrome4(String s) {
+        if (s == null || s.length()<1) return "";
+        int start = 0, end = 0;
+        for(int i =0; i<s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i+1);
+            int len = Math.max(len1, len2);
+            if (len > end-start) {
+                start = i-(len-1) /2;
+                end = i+ len/2;
+            }
+        }
+        return s.substring(start, end+1);
+    }
+
+    private static int expandAroundCenter(String s, int left, int right) {
+        while(left>=0 && right<s.length() && s.charAt(left) == s.charAt(right)) {
+            --left;
+            ++right;
+        }
+        return right-left-1;
+    }
+
+    /**
      * 15. 三数之和
      * @param nums
      * @return
@@ -1042,6 +1093,21 @@ public class OfferHot3 {
         }
     }
 
+    public void sortColors2(int[] nums) {
+        int len = nums.length;
+        int l=0, r = len-1;
+        for(int i=0; i<=r; i++) {
+            while (i <= r && nums[i] == 2) {
+                swap(nums, i, r);
+                --r;
+            }
+            if (nums[i] == 0) {
+                swap(nums, i, l);
+                ++l;
+            }
+        }
+    }
+
     /**
      * 96. 不同的二叉搜索树
      * 给你一个整数 n ，求恰由 n 个节点组成且节点值从 1 到 n 互不相同的 二叉搜索树 有多少种？返回满足题意的二叉搜索树的种数。
@@ -1185,28 +1251,28 @@ public class OfferHot3 {
      * @return
      */
     public static List<List<Integer>> subsets(int[] nums) {
-//        List<List<Integer>> res = new ArrayList<>();
-//        for (int i=0; i< (1<<nums.length); i++) {
-//            List<Integer> list = new ArrayList<>();
-//            for (int j=0; j<nums.length; j++) {
-//                if (((i>>j) & 1) == 1) {
-//                    list.add(nums[j]);
-//                }
-//            }
-//            res.add(list);
-//        }
-//        return res;
-        List<List<Integer>> res = new ArrayList<List<Integer>>();
-        res.add(new ArrayList<Integer>());
-        for (Integer n : nums) {
-            int size = res.size();
-            for (int i = 0; i < size; i++) {
-                List<Integer> newSub = new ArrayList<Integer>(res.get(i));
-                newSub.add(n);
-                res.add(newSub);
+        List<List<Integer>> res = new ArrayList<>();
+        for (int i=0; i< (1<<nums.length); i++) {
+            List<Integer> list = new ArrayList<>();
+            for (int j=0; j<nums.length; j++) {
+                if (((i>>j) & 1) == 1) {
+                    list.add(nums[j]);
+                }
             }
+            res.add(list);
         }
         return res;
+//        List<List<Integer>> res = new ArrayList<List<Integer>>();
+//        res.add(new ArrayList<Integer>());
+//        for (Integer n : nums) {
+//            int size = res.size();
+//            for (int i = 0; i < size; i++) {
+//                List<Integer> newSub = new ArrayList<Integer>(res.get(i));
+//                newSub.add(n);
+//                res.add(newSub);
+//            }
+//        }
+//        return res;
     }
 
     /**
