@@ -77,6 +77,57 @@ public class OfferHot3 {
     }
 
     /**
+     * 415.字符串相加
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public String addStrings(String num1, String num2) {
+        StringBuilder res = new StringBuilder();
+        int i = nums1.length()-1, j = nums2.length()-1, carry =0;
+        while(i>=0 || j>=0) {
+            int n1= i>=0 ? nums1.charAt(i) - '0' : 0;
+            int n2= j>=0 ? nums2.charAt(j) - '0' : 0;
+            int temp = n1+n2 + carry;
+            carry = temp /10;
+            res.append(temp % 10);
+            i--;
+            j--;
+        }
+        if(carry == 1) res.append(1);
+        return res.reverse().toString();
+    }
+
+    /**
+     * 53. 最大子数组和
+     * @param nums
+     * @return
+     */
+    public int maxSubArray(int[] nums) {
+//        int len = nums.length;
+//        int[] dp = new int[len];
+//        dp[0] = nums[0];
+//        for(int i=1; i<len; i++) {
+//            if(dp[i-1] >0) {
+//                dp[i] = dp[i-1] + nums[i];
+//            } else {
+//                dp[i] = nums[i];
+//            }
+//        }
+//        int res = dp[0];
+//        for(int i=0; i<len; i++) {
+//            res = Math.max(res, dp[i]);
+//        }
+        int pre = 0;
+        int res = nums[0];
+        for(int num : nums) {
+            pre = Math.max(pre + num, num);
+            res = math.max(res, pre);
+        }
+        return res;
+    }
+
+    /**
      * 14. 最长公共前缀
      *
      * @param strs
