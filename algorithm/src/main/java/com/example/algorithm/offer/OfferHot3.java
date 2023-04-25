@@ -53,6 +53,7 @@ public class OfferHot3 {
         node3.next = node4;
         deleteNode(node, 5);
         findDisappearedNumbers(new int[]{4,3,2,7,8,2,3,1});
+        findDisappearedNumbers2(new int[]{4,3,2,7,8,2,3,1});
         subarraySum2(new int[]{1, 2, 3}, 3);
 
         findKthLargest(new int[]{3,2,1,5,6,4}, 2);
@@ -84,10 +85,10 @@ public class OfferHot3 {
      */
     public String addStrings(String num1, String num2) {
         StringBuilder res = new StringBuilder();
-        int i = nums1.length()-1, j = nums2.length()-1, carry =0;
+        int i = num1.length()-1, j = num2.length()-1, carry =0;
         while(i>=0 || j>=0) {
-            int n1= i>=0 ? nums1.charAt(i) - '0' : 0;
-            int n2= j>=0 ? nums2.charAt(j) - '0' : 0;
+            int n1= i>=0 ? num1.charAt(i) - '0' : 0;
+            int n2= j>=0 ? num2.charAt(j) - '0' : 0;
             int temp = n1+n2 + carry;
             carry = temp /10;
             res.append(temp % 10);
@@ -122,7 +123,7 @@ public class OfferHot3 {
         int res = nums[0];
         for(int num : nums) {
             pre = Math.max(pre + num, num);
-            res = math.max(res, pre);
+            res = Math.max(res, pre);
         }
         return res;
     }
@@ -176,6 +177,34 @@ public class OfferHot3 {
         }
         return false;
     }
+
+    /**
+     * 22. 括号生成
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        if(n == 0) return res;
+        getParenthesis("", n, n, res);
+        return res;
+    }
+
+    private void getParenthesis(String n, int left, int right, List<String> res) {
+        if (left == 0 && right == 0) {
+            res.add(n);
+            return;
+        }
+        if (left == right) {
+            getParenthesis(n+"(", left-1, right, res);
+        } else if (left < right) {
+            if (left > 0) {
+                getParenthesis(n+"(", left-1, right, res);
+            }
+            getParenthesis(n+")", left, right-1, res);
+        }
+    }
+
 
     /**
      * 21. 合并两个有序链表
@@ -310,6 +339,24 @@ public class OfferHot3 {
                 break;
             }
             cur = cur.next;
+        }
+        return head;
+    }
+
+    /**
+     * 83. 删除排序链表中的重复元素
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null) return head;
+        ListNode cre = head;
+        while (cre.next != null) {
+            if (cre.next.val == cre.val) {
+                cre.next = cre.next.next;
+            } else {
+                cre = cre.next;
+            }
         }
         return head;
     }
@@ -751,7 +798,7 @@ public class OfferHot3 {
         int n = nums2.length;
         int left = (n+m+1)/2;
         int right = (n+m+2)/2;
-        // 将偶数和奇数的情况合并，如果是奇数，会球两次同样的k
+        // 将偶数和奇数的情况合并，如果是奇数，会求两次同样的k
         return (getKth(nums1,   0, m-1, nums2, 0, n-1, left) + getKth(nums1, 0, m-1, nums2, 0, n-1, right)) * 0.5;
     }
 
@@ -770,6 +817,31 @@ public class OfferHot3 {
         } else {
             return getKth(nums1, i+1, end1, nums2, start2, end2, k-(i-start1+1));
         }
+    }
+
+    public double findMedianSortedArrays2(int[] nums1, int[] nums2) {
+        if (nums1.length > nums2.length) {
+            return findMedianSortedArrays2(nums2, nums1);
+        }
+        int left = 0, right = nums1.length;
+        int halfLen = (nums1.length + nums2.length+1)/2;
+        while (left<=right) {
+            int i=(left+right)/2;
+            int j = halfLen-i;
+            if (i<right && nums2[j-1]>nums1[i]) {
+                left++;
+            } else if (i>left && nums1[i-1] > nums2[j]) {
+                right--;
+            } else {
+                int leftMax = (i==0) ? nums2[j-1] : (j==0?nums1[i-1]:Math.max(nums1[i-1], nums2[j-1]));
+                if (((nums1.length + nums2.length) & 1) == 1) {
+                    return leftMax * 1.0;
+                }
+                int rightMin = (i==nums1.length) ? nums2[j]:(j==nums2.length ? nums1[i]:Math.min(nums1[i], nums2[j]));
+                return (leftMax + rightMin) /2.0;
+            }
+        }
+        return 0.0;
     }
 
     /**
@@ -791,6 +863,21 @@ public class OfferHot3 {
             }
         }
         return res;
+    }
+
+    public static List<Integer> findDisappearedNumbers2(int[] nums) {
+        int n = nums.length;
+        for(int num : nums) {
+            int x = (num-1) % n;
+            nums[x] +=n;
+        }
+        List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < n; i++) {
+            if (nums[i] <= n) {
+                ret.add(i + 1);
+            }
+        }
+        return ret;
     }
 
     /**
@@ -846,7 +933,7 @@ public class OfferHot3 {
         for (int r = 1; r < len; r++) {
             for (int l=0; l<r; l++) {
 //                dp[l][r] => num[l]==num[r] && dp[l+1][r--];
-                if (s.charAt(l) == s.charAt(r) && (r-l)<=2 || dp[l+1][r-1]) {
+                if (s.charAt(l) == s.charAt(r) && ((r-l)<=2 || dp[l+1][r-1])) {
                     dp[l][r] = true;
                     if (r-l+1 > maxLen) {
                         maxLen = r-l+1;
@@ -951,6 +1038,40 @@ public class OfferHot3 {
             }
         }
         return res;
+    }
+
+    /**
+     * 10.正则表达式匹配
+     * @param s
+     * @param p
+     * @return
+     */
+    public boolean isMatch(String s, String p) {
+        if (s == null || p == null) {
+            return false;
+        }
+
+        return isMatch(s, p, 0, 0);
+    }
+
+    private boolean isMatch(String str, String pattern, int s, int p) {
+        if (p==pattern.length()) {
+            return str.length() == s;
+        }
+        // 正则表达式下一位为*，则此时考虑两种情况
+        if (p+1 < pattern.length() && pattern.charAt(p+1) == '*') {
+            // 正则表达式当前位字符与字符串当前位置向匹配，则匹配1位或0位
+            if (s<str.length() && (str.charAt(s) == pattern.charAt(p) || pattern.charAt(p) == '.')) {
+                return isMatch(str, pattern, s, p+2) || isMatch(str, pattern, s+1, p);
+            }
+            // 若正则表达式当前为字符与字符串当前位置不匹配，则匹配0位
+            return isMatch(str, pattern, s, p+2);
+        }
+        // 匹配1位
+        if (s<str.length() && (str.charAt(s)==pattern.charAt(p) || pattern.charAt(p) == '.')) {
+            return isMatch(str, pattern, s+1, p+1);
+        }
+        return false;
     }
 
     /**
@@ -1205,6 +1326,32 @@ public class OfferHot3 {
         return left;
     }
 
+    public static int[] searchRange2(int[] nums, int target) {
+        if (nums == null || nums.length<1) {
+            return new int[]{-1, -1};
+        }
+        int low = 0;
+        int high = nums.length-1;
+        while (low <= high) {
+            int mid = (low + high)>>1;
+            if(nums[mid] < target) {
+                low = mid+1;
+            } else if (nums[mid] > target) {
+                high = mid-1;
+            } else {
+                int left = mid, right = mid;
+                while(left >= low && nums[left] == target) {
+                    left--;
+                }
+                while(right<=high && nums[right] == target) {
+                    right++;
+                }
+                return new int[]{left+1, right-1};
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
     /**
      * 54. 螺旋矩阵
      * @param matrix
@@ -1427,6 +1574,30 @@ public class OfferHot3 {
 //        Arrays.sort(nums);
     }
 
+    public static void nextPermutation2(int[] nums) {
+        int len = nums.length;
+        if (len <=1) return;
+        int index = -1;
+        for (int i=nums.length-2; i>=0; i--) {
+            if (nums[i] < nums[i+1]) {
+                index =i;
+                break;
+            }
+        }
+        if (index == -1) {
+            reverse(nums, 0, nums.length-1);
+            return;
+        }
+        int secIndex = -1;
+        for (int i=nums.length-1; i>=0; i--) {
+            if (nums[i] > nums[index]) {
+                secIndex = i;
+            }
+        }
+        swap(nums, index, secIndex);
+        reverse(nums, index+1, nums.length-1);
+    }
+
     /**
      * 46. 全排列
      * @param nums
@@ -1496,6 +1667,17 @@ public class OfferHot3 {
         return false;
     }
 
+    public static boolean canJump2(int[] nums) {
+        if (nums == null) return false;
+        // 从后往前跳
+        int last = nums.length-1;
+        for (int i=nums.length-1; i>=0; i--) {
+            if (nums[i] + i >= last) {
+                last=i;
+            }
+        }
+        return last==0;
+    }
 
     /**
      * 128. 最长连续序列
@@ -1587,6 +1769,27 @@ public class OfferHot3 {
     }
 
     /**
+     * 62.不同路径
+     * @param m
+     * @param n
+     * @return
+     */
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 1;
+                } else {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                }
+            }
+        }
+
+        return dp[m - 1][n - 1];
+    }
+
+    /**
      * 204. 计数质数
      * @param n
      * @return
@@ -1643,4 +1846,11 @@ public class OfferHot3 {
         arr[i] = arr[j];
         arr[j] = tmp;
     }
+
+    private static void reverse(int[] nums, int start, int end) {
+        while (start < end) {
+            swap(nums, start++, end--);
+        }
+    }
+
 }
