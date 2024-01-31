@@ -55,7 +55,7 @@ public class TreeTest {
 
     public TreeNode mirrorTree2(TreeNode root) {
         if (root == null) return null;
-        Stack<TreeNode> stack = new Stack<>(){{add(root);}};
+        Stack<TreeNode> stack = new Stack<>();
         if (!stack.isEmpty()) {
             TreeNode node = stack.pop();
             if (node.left != null) stack.add(node.left);
@@ -74,7 +74,7 @@ public class TreeTest {
      */
     public int[] levelOrder(TreeNode root) {
         if (root == null) return new int[0];
-        Queue<TreeNode> queue = new LinkedList<>(){{add(root);}};
+        Queue<TreeNode> queue = new LinkedList<>();
         List<Integer> ans = new ArrayList<>();
         while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
@@ -122,7 +122,7 @@ public class TreeTest {
     public String serialize(TreeNode root) {
         if(root == null) return "[]";
         StringBuilder res = new StringBuilder("[");
-        Queue<TreeNode> queue = new LinkedList<>() {{ add(root); }};
+        Queue<TreeNode> queue = new LinkedList<>();
         while(!queue.isEmpty()) {
             TreeNode node = queue.poll();
             if(node != null) {
@@ -141,7 +141,7 @@ public class TreeTest {
         if(data.equals("[]")) return null;
         String[] vals = data.substring(1, data.length() - 1).split(",");
         TreeNode root = new TreeNode(Integer.parseInt(vals[0]));
-        Queue<TreeNode> queue = new LinkedList<>() {{ add(root); }};
+        Queue<TreeNode> queue = new LinkedList<>();
         int i = 1;
         while(!queue.isEmpty()) {
             TreeNode node = queue.poll();

@@ -5,12 +5,11 @@ import java.util.Iterator;
 
 public class ArrayList<E> implements List<E>{
     private int DEFAULT_CAPACITY = 10;
-    private E[] data;
+    private E[] data = (E[]) new Object[DEFAULT_CAPACITY];
     private int size;
 
     public ArrayList() {
         size = 0;
-        data = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     @Override

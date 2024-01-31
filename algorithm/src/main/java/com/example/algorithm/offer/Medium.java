@@ -1,12 +1,26 @@
 package com.example.algorithm.offer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Medium {
     public static void main(String[] args) {
 //        singleNumbers(new int[]{4,3,4});
         findContinuousSequence(9);
+        maxSubArray(new int[] {-2,1,-3,4,-1,2,1,-5,4});
+    }
+
+    /**
+     * 53. 最大子数组和
+     * @param nums
+     * @return
+     */
+    public static int maxSubArray(int[] nums) {
+        int pre = 0, res = nums[0];
+        for (int num : nums) {
+            pre = Math.max(pre + num, num);
+            res = Math.max(res, pre);
+        }
+        return res;
     }
 
     /**
@@ -142,5 +156,27 @@ public class Medium {
         // 还原找过的元素，因为之后可能还会访问到
         board[i][j] = words[k];
         return res;
+    }
+
+    public static boolean isValidSudoku(char[][] board) {
+        Map<Integer, Set<Integer>> row = new HashMap<>(), col = new HashMap<>(), area = new HashMap<>();
+        for (int i = 0; i< 9; i++) {
+            row.put(i, new HashSet<>());
+            col.put(i, new HashSet<>());
+            area.put(i, new HashSet<>());
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                char c = board[i][j];
+                if (c == '.') continue;
+                int u = c - '0';
+                int idx = i /3*3 + j*3;
+                if (row.get(i).contains(u) || col.get(j).contains(u) || area.get(idx).contains(u)) return false;
+                row.get(i).add(u);
+                col.get(j).add(u);
+                area.get(idx).add(u);
+            }
+        }
+        return true;
     }
 }
