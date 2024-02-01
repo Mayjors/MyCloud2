@@ -42,7 +42,8 @@ public class OfferHot3 {
         longestConsecutive(new int[] {100,4,200,1,3,2});
 
         longestPalindrome3("babad");
-        nextPermutation(new int[]{1, 2, 3});
+//        nextPermutation3(new int[]{1, 2, 3});
+        nextPermutation3(new int[]{1, 5, 8, 4, 7, 6, 5, 3, 1});
 
         ListNode node = new ListNode(4);
         ListNode node2 = new ListNode(5);
@@ -1572,6 +1573,25 @@ public class OfferHot3 {
             }
         }
 //        Arrays.sort(nums);
+    }
+
+    public static void nextPermutation3(int[] nums) {
+        int len = nums.length;
+        for (int i = len - 1; i > 0; i--) {
+            if (nums[i] > nums[i - 1]) {
+                Arrays.sort(nums, i, len);
+                for (int j = i; j <len; j++) {
+                    if (nums[j] > nums[i - 1]) {
+                        int temp = nums[j];
+                        nums[j] = nums[i - 1];
+                        nums[i - 1] = temp;
+                        return;
+                    }
+                }
+            }
+        }
+        Arrays.sort(nums);
+        return;
     }
 
     public static void nextPermutation2(int[] nums) {

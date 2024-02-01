@@ -11,6 +11,48 @@ public class Simple {
 //        int s = cuttingRope(3);
 //        System.out.println(s);
         validParentheses("");
+        sortColors(new int[]{2, 0, 2, 1, 1, 0});
+    }
+
+    public static void sortColors(int[] nums) {
+        int a = 0, b = 0;
+        for (int i=0; i<nums.length; i++) {
+            int num = nums[i];
+            nums[i] = 2;
+            if (num < 2) {
+                nums[b]=1;
+                b++;
+            }
+            if (num<1) {
+                nums[a] = 0;
+                a++;
+            }
+        }
+    }
+
+    public static void sortColors2(int[] nums) {
+        int len = nums.length;
+        if (len < 2) return;
+        int zero = 0, two = len;
+        int i = 0;
+        while (i<two) {
+            if (nums[i] == 0) {
+                swap(nums, i, zero);
+                zero++;
+                i++;
+            } else if (nums[i] == 1) {
+                i++;
+            } else {
+                two--;
+                swap(nums, i, two);
+            }
+        }
+    }
+
+    private static void swap(int[] nums, int a, int b) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
     }
 
     public static boolean validParentheses(String parens) {
