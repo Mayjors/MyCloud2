@@ -130,6 +130,22 @@ public class OfferHot3 {
     }
 
     /**
+     * 27. 移除元素
+     * @param nums
+     * @param val
+     * @return
+     */
+    public static int removeElement(int[] nums, int val) {
+        int idx = 0;
+        for (int x : nums) {
+            if (x != val) {
+                nums[idx++] = x;
+            }
+        }
+        return idx;
+    }
+
+    /**
      * 14. 最长公共前缀
      *
      * @param strs
@@ -206,6 +222,87 @@ public class OfferHot3 {
         }
     }
 
+    /**
+     * 88. 合并两个有序数组
+     * @param nums1
+     * @param m
+     * @param nums2
+     * @param n
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i = m+n;
+        while(n>0) {
+            if (m>0 && nums1[m-1] > nums2[n-1]) {
+                nums1[--i] = nums1[--m];
+            }
+        }
+    }
+
+    /**
+     * 674. 最长连续递增序列
+     * @param nums
+     * @return
+     */
+    public int findLengthOfLCIS(int[] nums) {
+        int start = 0;
+        int max = Integer.MIN_VALUE;
+        for (int i=1; i<nums.length; i++) {
+            if (nums[i] <= nums[i-1]) {
+                start = i;
+            }
+            max = Math.max(max, i-start+1);
+        }
+        return max;
+    }
+
+    /**
+     * 子数组最大平均值
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static double findMaxAverage(int[] nums, int k) {
+        int sum = 0;
+        int len = nums.length;
+        // 先统计第一个窗口的和
+        for(int i=0; i<k; i++) {
+            sum+= nums[i];
+        }
+        int max = sum;
+        for (int i=k;i<len; i++) {
+            sum = sum-nums[i-k]+nums[i];
+            max = Math.max(sum, max);
+        }
+        return max/k * 1.0;
+    }
+
+    /**
+     * 省份数量
+     * 深度优先
+     * @param citysConnected
+     * @return
+     */
+    public static int getProvince(int[][] citysConnected) {
+        int citys = citysConnected.length;
+        boolean[] visited = new boolean[citys];
+        int provinces = 0;
+        for (int i=0; i< citys; i++) {
+            if (!visited[i]) {
+                provinceDfs(i, citys, visited, citysConnected);
+                provinces++;
+            }
+        }
+        return provinces;
+    }
+
+    private static void provinceDfs(int i, int citys, boolean[] visited, int[][] citysConnected) {
+        for (int j=0; j<citys; j++) {
+            if (citysConnected[i][j] == 1 && !visited[j]) {
+                visited[j] = true;
+                provinceDfs(j, citys, visited, citysConnected);
+            }
+        }
+    }
 
     /**
      * 21. 合并两个有序链表
@@ -443,7 +540,7 @@ public class OfferHot3 {
     }
 
     /**
-     * 905. 按奇偶排序狐族
+     * 905. 按奇偶排序
      * @param nums
      * @return
      */
@@ -1010,6 +1107,26 @@ public class OfferHot3 {
     }
 
     /**
+     * 统计素数个数
+     * @param n
+     * @return
+     */
+    public static int eratosthenes(int n) {
+        boolean[] isPrime = new boolean[n];
+        int count = 0;
+        for (int i=2; i<n; i++) {
+            if (!isPrime[i]) {
+                count++;
+                for (int j=i*i; j<n; j+=i) {
+                    isPrime[j] = true;
+                }
+            }
+        }
+        return count;
+    }
+
+
+    /**
      * 15. 三数之和
      * @param nums
      * @return
@@ -1472,6 +1589,48 @@ public class OfferHot3 {
 //            }
 //        }
 //        return res;
+    }
+
+    /**
+     * 二叉树的最小深度
+     * 最小深度是从根节点到最近叶子结点的最短路径上的节点数量
+     * @param root
+     * @return
+     */
+    public static int minDept(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left == null && root.right == null) {
+            return 1;
+        }
+        int min = Integer.MAX_VALUE;
+        if (root.left != null) {
+            min = Math.min(minDept(root.left), min);
+        }
+        if (root.right != null) {
+            min = Math.min(minDept(root.right), min);
+        }
+        return min+1;
+    }
+
+    public static int minDept2(TreeNode root) {
+        if (root == null) return 0;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int dept = 0;
+        while(!queue.isEmpty()) {
+            dept++;
+            TreeNode node = queue.poll();
+            if (node.left == null && node.right == null) {
+                return dept;
+            }
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+        return dept;
     }
 
     /**

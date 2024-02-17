@@ -3,6 +3,7 @@ package com.example.algorithm.zijie;
 public class Test {
     public static void main(String[] args) {
         ListNode l1 = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(3, new ListNode(3, new ListNode(4, new ListNode(4, new ListNode(5))))))));
+        l1.next = new ListNode(2, new ListNode(3, new ListNode(3, new ListNode(4, new ListNode(4, new ListNode(5))))));
         deleteDuplicates(l1);
         removeElement(new int[]{3,2,2,3}, 3);
         plusOne(new int[]{8, 9});
@@ -89,6 +90,23 @@ public class Test {
             }
         }
         return idx;
+    }
+
+    public static ListNode deleteDuplicates2(ListNode head) {
+        ListNode dummy = new ListNode();
+        ListNode tail = dummy;
+        while (head != null) {
+            if (head.next == null || head.val != head.next.val) {
+                tail.next = head;
+                tail = head;
+            }
+            while (head.next != null && head.val == head.next.val) {
+                head = head.next;
+            }
+            head = head.next;
+        }
+        tail.next = null;
+        return dummy.next;
     }
 
     public static ListNode deleteDuplicates(ListNode head) {
