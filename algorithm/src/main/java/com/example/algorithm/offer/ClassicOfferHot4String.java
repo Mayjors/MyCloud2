@@ -9,19 +9,20 @@ public class ClassicOfferHot4String {
 
     /**
      * 88. 合并两个有序数组
+     *
      * @param nums1
      * @param m
      * @param nums2
      * @param n
      */
     public static void merge(int[] nums1, int m, int[] nums2, int n) {
-        int i = m+n;
+        int i = m + n;
         while (n > 0) {
-            if (m>0 && nums1[m-1] > nums2[n-1]) {
-                nums1[i] = nums1[m-1];
+            if (m > 0 && nums1[m - 1] > nums2[n - 1]) {
+                nums1[i] = nums1[m - 1];
                 m--;
             } else {
-                nums1[i] = nums2[n-1];
+                nums1[i] = nums2[n - 1];
                 n--;
             }
             i--;
@@ -30,6 +31,7 @@ public class ClassicOfferHot4String {
 
     /**
      * 27. 移除元素
+     *
      * @param nums
      * @param val
      * @return
@@ -46,6 +48,7 @@ public class ClassicOfferHot4String {
 
     /**
      * 26. 删除有序数组中的重复项
+     *
      * @param nums
      * @return
      */
@@ -54,27 +57,28 @@ public class ClassicOfferHot4String {
         int p = 0, q = 1;
         while (q < nums.length) {
             if (nums[p] != nums[q]) {
-                if (q-p >1) {
-                    nums[p+1] = nums[q];
+                if (q - p > 1) {
+                    nums[p + 1] = nums[q];
                 }
                 p++;
             }
             q++;
         }
-        return p+1;
+        return p + 1;
     }
 
     /**
      * 169. 多数元素
+     *
      * @param nums
      * @return
      */
     public int majorityElement(int[] nums) {
         int n = nums[0], count = 1;
-        for (int i=0; i<nums.length; i++) {
+        for (int i = 0; i < nums.length; i++) {
             if (n == nums[i]) {
                 ++count;
-            } else if (--count==0) {
+            } else if (--count == 0) {
                 n = nums[i];
                 count = 1;
             }
@@ -83,15 +87,16 @@ public class ClassicOfferHot4String {
     }
 
     /**
-     189. 轮转数组
+     * 189. 轮转数组
+     *
      * @param nums
      * @param k
      */
     public static void rotate(int[] nums, int k) {
         k %= nums.length;
-        reverse(nums, 0, nums.length-1);
-        reverse(nums, 0, k-1);
-        reverse(nums, k, nums.length-1);
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
     }
 
     private static void reverse(int[] nums, int start, int end) {
@@ -106,6 +111,7 @@ public class ClassicOfferHot4String {
 
     /**
      * 121. 买卖股票的最佳时机
+     *
      * @param prices
      * @return
      */
@@ -120,20 +126,22 @@ public class ClassicOfferHot4String {
 
     /**
      * 55. 跳跃游戏
+     *
      * @param nums
      * @return
      */
     public static boolean canJump(int[] nums) {
         int k = 0;
-        for (int i=0; i<nums.length; i++) {
-            if (i>k) return false;
-            k = Math.max(k, i+nums[i]);
+        for (int i = 0; i < nums.length; i++) {
+            if (i > k) return false;
+            k = Math.max(k, i + nums[i]);
         }
         return true;
     }
 
     /**
      * 45. 跳跃游戏 II
+     *
      * @param nums
      * @return
      */
@@ -141,7 +149,7 @@ public class ClassicOfferHot4String {
         int end = 0;
         int maxPosition = 0;
         int steps = 0;
-        for (int i=0; i<nums.length-1; i++) {
+        for (int i = 0; i < nums.length - 1; i++) {
             //找能跳的最远的
             maxPosition = Math.max(maxPosition, nums[i] + i);
             if (i == end) {
@@ -154,6 +162,7 @@ public class ClassicOfferHot4String {
 
     /**
      * 209. 长度最小的子数组
+     *
      * @param target
      * @param nums
      * @return
@@ -162,11 +171,11 @@ public class ClassicOfferHot4String {
         int l = 0, r = 0;
         int sum = 0;
         int min = Integer.MAX_VALUE;
-        while (r<nums.length) {
+        while (r < nums.length) {
             sum += nums[r];
             r++;
-            while (sum>=target) {
-                min = Math.min(min, r-l);
+            while (sum >= target) {
+                min = Math.min(min, r - l);
                 sum = sum - nums[l];
                 l++;
             }
@@ -176,47 +185,88 @@ public class ClassicOfferHot4String {
 
     /**
      * 9.回文数
+     *
      * @param x
      * @return
      */
     public static boolean isPalindrome(int x) {
-        if (x <0) return false;
+        if (x < 0) return false;
         int cur = 0;
         int num = x;
-        while (num !=0) {
-            cur = cur * 10 + num %10;
-            num /=10;
+        while (num != 0) {
+            cur = cur * 10 + num % 10;
+            num /= 10;
         }
         return cur == x;
     }
 
     /**
      * 66.加一
+     *
      * @param digits
      * @return
      */
     public int[] plusOne(int[] digits) {
-        for (int i= digits.length-1; i>=0; i--) {
+        for (int i = digits.length - 1; i >= 0; i--) {
             digits[i]++;
             digits[i] = digits[i] % 10;
             if (digits[i] != 0) return digits;
         }
-        digits = new int[digits.length +1];
+        digits = new int[digits.length + 1];
         digits[0] = 1;
         return digits;
     }
 
     /**
      * 191. 位1的个数
+     *
      * @param n
      * @return
      */
     public int hammingWeight(int n) {
         int count = 0;
-        while (n!=0) {
-            count += n&1;
-            n>>>=1;
+        while (n != 0) {
+            count += n & 1;
+            n >>>= 1;
         }
         return count;
     }
+
+    public static boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) return false;
+//        for (int i = 0; i < matrix.length; i++) {
+//            for (int j = 0; j < matrix[i].length; j++) {
+//                if (matrix[i][j] == target) return true;
+//            }
+//        }
+        // 从右上角开始找
+        int i=0, j=0;
+        for (i=0, j=matrix[0].length-1; i<matrix.length && j>=0;) {
+            if (matrix[i][j] == target) return true;
+            else if (matrix[i][j] > target) j--;
+            else i++;
+        }
+        return false;
+    }
+
+    /**
+     * 153. 寻找旋转排序数组中的最小值
+     *
+     * @param nums
+     * @return
+     */
+    public static int findMin(int[] nums) {
+        int low = 0;
+        int hight = nums.length - 1;
+        while (low < hight) {
+            int mid = low + (hight - low) / 2;
+            if (nums[mid] < nums[hight]) {
+                low = mid + 1;
+            } else {
+                hight = mid;
+            }
+        }
+        return nums[low];
+    }
+
 }
