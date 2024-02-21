@@ -264,7 +264,7 @@ public class Hot {
         boolean[][] dp = new boolean[strLen][strLen];
         for (int r = 1; r < strLen; r++) {
             for (int l = 0; l < r; l++) {
-                if (s.charAt(l) == s.charAt(r) && (r - 1 <= 2 || dp[l + 1][r - 1])) {
+                if (s.charAt(l) == s.charAt(r) && (r - l <= 2 || dp[l + 1][r - 1])) {
                     dp[l][r] = true;
                     if (r - l + 1 > maxLen) {
                         maxLen = r - l + 1;
