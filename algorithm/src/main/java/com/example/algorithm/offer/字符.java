@@ -10,8 +10,23 @@ public class 字符 {
         System.out.println(maxArea(new int[] {1,8,6,2,5,4,8,3,7}));
         System.out.println(generateParenthesis2(3));
         System.out.println(longestValidParentheses(")(()"));
+        System.out.println(findMedianSortedArrays2(new int[]{1, 3, 5}, new int[]{2, 4}));
     }
 
+    /**
+     * 121. 买卖股票的最佳时机
+     * @param prices
+     * @return
+     */
+    public int maxProfit(int[] prices) {
+        int min = prices[0];
+        int max = 0;
+        for (int i = 0; i < prices.length; i++) {
+            min = Math.min(prices[i], min);
+            max = Math.max(max, prices[i] - min);
+        }
+        return max;
+    }
 
     public static int longestValidParentheses(String s) {
         if (s == null || s.length() == 0) return 0;
@@ -343,6 +358,181 @@ public class 字符 {
             }
         }
         return ans;
+    }
+
+    /**
+     * 75. 颜色分类
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        int n = nums.length;
+        int ptr = 0;
+        for (int i =0; i<n; i++) {
+            if (nums[i] == 0) {
+                int temp = nums[i];
+                nums[i] = nums[ptr];
+                nums[ptr] = temp;
+                ++ptr;
+            }
+        }
+        for (int i = ptr; i<n; ++i) {
+            if (nums[i] == 1) {
+                int temp = nums[i];
+                nums[i] = nums[ptr];
+                nums[ptr] = temp;
+                ++ptr;
+            }
+        }
+    }
+
+    public void sortColors2(int[] nums) {
+        int[] shorts = new int[3];
+        for (int num : nums) {
+            shorts[num]++;
+        }
+        int j = 0;
+        for (int i=0; i<shorts.length; i++) {
+            while (shorts[i]-- > 0) {
+                nums[j++] = i;
+            }
+        }
+    }
+
+    public void sortColors3(int[] nums) {
+        int a =0, b = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int num = nums[i];
+            if (num < 2) {
+                nums[b] = 1;
+                b++;
+            }
+            if (num < 1) {
+                nums[a] = 2;
+                a++;
+            }
+        }
+    }
+
+    /**
+     * 96. 不同的二叉搜索树
+     * @param n
+     * @return
+     */
+    public static int numTrees(int n) {
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        for (int i = 1; i<=n; i++) {
+            for (int j = 0; j<=i-1; j++) {
+                dp[i] += dp[j] * dp[i-1-j];
+            }
+        }
+        return dp[n];
+    }
+
+
+    /**
+     * 4. 寻找两个正序数组的中位数
+     * 归并算法
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length;
+        int[] nums = new int[m+n];
+        int i = 0, j = 0, k = 0;
+        while (i<m && j<n) {
+            if (nums1[i] <= nums2[j]) {
+                nums[k++] = nums1[i++];
+            } else {
+                nums[k++] = nums2[j++];
+            }
+        }
+        while (i<m) {
+            nums[k++] = nums1[i++];
+        }
+        while (j<n) {
+            nums[k++] = nums2[j++];
+        }
+        if ((m+n)%2 == 1) {
+            return nums[k/2];
+        } else {
+            return (nums[k/2-1]+nums[k/2])/2.0;
+        }
+    }
+
+    public static double findMedianSortedArrays2(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length;
+        if (m > n) {
+            return findMedianSortedArrays2(nums2, nums1);
+        }
+        int left = 0, right = m, i, j, maxLeft = 0, minRight = 0;
+        while (left <= right) {
+            i = (left + right) / 2;
+            j = (m + n + 1) / 2 - i;
+//            if (i > 0 && j > 0) {
+//                maxLeft = Math.max(maxLeft, Math.min(nums1[i-1], nums2[j-1]));
+//            }
+//            if (i > 0) {
+//                minRight = Math.min(minRight, nums1[i-1]);
+//            }
+//            if (j > 0) {
+//                maxLeft = Math.max(maxLeft, nums2[j-1]);
+//            }
+//            if (maxLeft <= minRight) {
+//                left = i + 1;
+//            } else {
+//                right = i - 1;
+//            }
+            if (i>0 && nums1[i-1] > nums2[j]) {
+                right = i-1;
+            } else if (i<m && nums2[j-1] > nums1[i]) {
+                left = i+1;
+            } else {
+                maxLeft = (i==0) ? nums2[j-1] : (j==0) ? nums1[i-1] : Math.max(nums1[i-1], nums2[j-1]);
+                if ((m+n) %2 ==1) {
+                    return maxLeft;
+                }
+                minRight = (i==m) ? nums2[j] : (j==n) ? nums1[i] : Math.min(nums1[i], nums2[j]);
+                return (maxLeft+minRight)/2.0;
+            }
+        }
+        return 0.0;
+    }
+
+
+    /**
+     * 72. 编辑距离
+     * 使用了一个二维数组 dp 来存储编辑距离的中间结果，
+     * 其中 dp[i][j] 表示将 word1 的前 i 个字符转换成 word2 的前 j 个字符所需的最少操作次数。
+     * 接着，我们使用两个 for 循环计算 dp 数组中的所有值，其中 dp[0][0] 初始值为 0，dp[0][j] 表示将空字符串转换为 word2 的前 j 个字符所需的最少操作次数，
+     * dp[i][0] 表示将 word1 的前 i 个字符转换为空字符串所需的最少操作次数。最后，函数返回 dp[m][n]，
+     * 即将 word1 转换为 word2 所需的最少操作次数
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public static int minDistance(String word1, String word2) {
+        int m = word1.length();
+        int n = word2.length();
+        int[][] dp = new int[m+1][n+1];
+        for (int i = 0; i<=m; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 0; j<=n; j++) {
+            dp[0][j] = j;
+        }
+        // 计算dp数组中的所有值
+        for (int i = 1; i<=m; i++) {
+            for (int j = 1; j<=n; j++) {
+                if (word1.charAt(i-1) == word2.charAt(j-1)) {
+                    dp[i][j] = dp[i-1][j-1];
+                } else {
+                    dp[i][j] = Math.min(dp[i-1][j-1], Math.min(dp[i][j-1], dp[i-1][j])) + 1;
+                }
+            }
+        }
+        return dp[m][n];
     }
 
     /**
