@@ -1,10 +1,16 @@
 package com.example.algorithm.offer;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
 public class ClassicOfferHot4String {
     public static void main(String[] args) {
         maxProfit(new int[] {7,1,5,3,6,4});
         jump(new int[] {2, 3, 1, 1, 2, 2, 2});
         minSubArrayLen(7, new int[]{2,3,1,2,4,3});
+        System.out.println(restoreIpAddresses("255255255255"));
     }
 
     /**
@@ -267,6 +273,63 @@ public class ClassicOfferHot4String {
             }
         }
         return nums[low];
+    }
+
+    public static List<String> restoreIpAddresses(String s) {
+        int len = s.length();
+        List<String> res = new ArrayList<>();
+        if (len < 4 || len > 12) {
+            return res;
+        }
+        Deque<String> path = new ArrayDeque<>();
+        restoreIpDfs(s, len, 0, 4, path, res);
+        return res;
+    }
+
+    private static void restoreIpDfs(String s, int len, int begin, int residue, Deque<String> path, List<String> res) {
+        // 如果字符串已经遍历到最后，且已经切分成4段
+        // 就把当前路径上的元素加入到返回的结果集中
+        if (begin == len && residue == 0) {
+            res.add(String.join(".", path));
+            return;
+        }
+        // begin表示遍历字符串从哪开始
+        for (int i = begin; i<begin+3; i++) {
+            // 如果遍历到的子串长度大于字符串长度,或者子串的值大于255,则直接返回
+            // 如果超过字符串长度，就直接退出
+            // begin每次选择都是从之前选择的元素的下一个元素开始
+            if (i>=len) {
+                break;
+            }
+            // 如果剩余元素大于ip最多能容纳的个数就剪枝
+            if (len - i > residue *3) {
+                continue;
+            }
+            // 判断当前截取字符串是否小妤0或大于255
+            // 这里的begin和i代表的事，这时候截取了几个字符
+            if (judgeIpSegment(s, begin, i)) {
+                String currentIpSegment = s.substring(begin, i + 1);
+                path.addLast(currentIpSegment);
+                restoreIpDfs(s, len, i + 1, residue - 1, path, res);
+                // 剪枝
+                path.removeLast();
+            }
+        }
+    }
+
+    private static boolean judgeIpSegment(String s, int left, int right) {
+        int len = right - left + 1;
+        // 如果截取的大于等于2的字符串的开始为0，就直接false
+        if (len > 1 && s.charAt(left) == '0') {
+            return false;
+        }
+        // 定义返回结果的集合
+        int res = 0;
+        while (left <= right) {
+            res = res * 10 + (s.charAt(left) - '0');
+            left++;
+        }
+        return res >= 0 && res <= 255;
     }
 
 }

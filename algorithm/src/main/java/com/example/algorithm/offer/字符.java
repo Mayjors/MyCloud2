@@ -14,6 +14,104 @@ public class 字符 {
     }
 
     /**
+     * 283.移动零
+     * @param nums
+     */
+    public void moveZeroes(int[] nums) {
+        int len = nums.length;
+        int slow = 0, fast = 0;
+        while (fast < len) {
+            if (nums[fast] != 0) {
+                nums[slow] = nums[fast];
+                slow++;
+            }
+            fast++;
+        }
+        while (slow < len) {
+            nums[slow] = 0;
+            slow++;
+        }
+    }
+
+    /**
+     * 202.快乐数
+     * @param n
+     * @return
+     */
+    public boolean isHappy(int n) {
+//        Set<Integer> set = new HashSet<>();
+//        while (n != 1 && !set.contains(n)) {
+//            set.add(n);
+//            n = squareSum(n);
+//        }
+//        return n == 1;
+        int slow = n, fast = squareSum(n);
+        while (fast != 1 && slow != fast) {
+            slow = squareSum(slow);
+            fast = squareSum(squareSum(fast));
+        }
+        return slow == 1;
+    }
+
+    private int squareSum(int n) {
+        int sum = 0;
+        while (n > 0) {
+            int digit = n % 10;
+            n /= 10;
+            sum += digit * digit;
+        }
+        return sum;
+    }
+
+    /**
+     * 27.移除元素
+     * @param nums
+     * @param val
+     * @return
+     */
+    public int removeElement(int[] nums, int val) {
+//        int slow =0, fast = 0;
+//        while (fast < nums.length) {
+//            if (nums[fast] != val) {
+//                nums[slow] = nums[fast];
+//                slow++;
+//            }
+//            fast++;
+//        }
+//        return slow;
+        int left = 0, right = nums.length;
+        while (left < right) {
+            if (nums[left] == val) {
+                nums[left] = nums[right-1];
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 26.删除有序数组中的重复项
+     * @param nums
+     * @return
+     */
+    public int removeDuplicates(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        int p = 0, q = 1;
+        while (q < nums.length) {
+            if (nums[p] != nums[q]) {
+                if (q-p > 1) {
+                    nums[p+1] = nums[q];
+                }
+                p++;
+            }
+            q++;
+        }
+        return p+1;
+    }
+
+    /**
      * 121. 买卖股票的最佳时机
      * @param prices
      * @return
