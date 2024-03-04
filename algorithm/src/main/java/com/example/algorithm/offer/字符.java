@@ -11,6 +11,7 @@ public class 字符 {
         System.out.println(generateParenthesis2(3));
         System.out.println(longestValidParentheses(")(()"));
         System.out.println(findMedianSortedArrays2(new int[]{1, 3, 5}, new int[]{2, 4}));
+        System.out.println(restoreIpAddresses("255255255255"));
     }
 
     /**
@@ -370,6 +371,70 @@ public class 字符 {
         return stack.isEmpty();
     }
 
+    /**
+     * 93. 复原 IP 地址
+     * @param s
+     * @return
+     */
+    public static List<String> restoreIpAddresses(String s) {
+        int len = s.length();
+        List<String> res = new ArrayList<>();
+        if (len> 12 || len < 4) {
+            return res;
+        }
+        // 定义一个保存路径上的变量
+        Deque<String> path = new ArrayDeque<>();
+        restoreIpDfs(s, len, 0, 4, path, res);
+        return res;
+    }
+
+    private static void restoreIpDfs(String s, int len, int begin, int residue, Deque<String> path, List<String> res) {
+        // 如果字符串已经遍历到最后，并且已经切分成4段了
+        // 就把当前路径上的元素加入到返回的结果集中
+        if (begin == len) {
+            if (residue == 0) {
+                res.add(String.join(".", path));
+            }
+            return;
+        }
+        // begin表示遍历字符串从哪开始
+        for (int i = begin; i<begin+3; i++) {
+            // 如果超出字符串长度，就直接退出
+            // begin 每次选择都是从之前选择的元素的下一个元素开始
+            if (i>=len) {
+                break;
+            }
+            // 如果剩余元素大于ip最多能容纳的个数，就剪枝
+            if (len -i > residue * 3) {
+                continue;
+            }
+            // 判断当前截取字符串是否小于0或大于255
+            // 这里的begin和i代表的是这时候截取了几个字符
+            if (judgeIpSegment(s, begin, i)) {
+                // 保留当前截取字符
+                String currentIpSegment = s.substring(begin, i+1);
+                path.push(currentIpSegment);
+                restoreIpDfs(s, len, i+1, residue-1, path, res);
+                path.pop();
+            }
+        }
+    }
+
+    private static boolean judgeIpSegment(String s, int left, int right) {
+        int len = right - left + 1;
+        if (len > 1 && s.charAt(left) == '0') {
+            return false;
+        }
+        // 定义返回结果的集合
+        int res = 0;
+        // 拼接字符
+        while (left <= right) {
+            // res*10 是为了将先加的字符默认比后面的字符大10倍，也就是位数是从小到大
+            res = res * 10 + s.charAt(left) - '0';
+            left++;
+        }
+        return res >= 0 && res <= 255;
+    }
 
     /**
      * 5. 最长回文子串

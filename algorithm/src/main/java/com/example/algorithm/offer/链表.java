@@ -1,5 +1,7 @@
 package com.example.algorithm.offer;
 
+import com.example.algorithm.base.List;
+
 public class 链表 {
     public static void main(String[] args) {
 
@@ -26,6 +28,165 @@ public class 链表 {
             cur = cur.next;
         }
         cur.next = list1 == null ? list2 : list1;
+        return dummy.next;
+    }
+
+    /**
+     * 109. 有序链表转换二叉搜索树
+     * @param head
+     * @return
+     */
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) return null;
+        if (head.next == null) {
+            return new TreeNode(head.val);
+        }
+        ListNode fast = head, slow = head, pre = null;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            pre = slow;
+            slow = slow.next;
+        }
+        pre.next = null;
+        TreeNode root = new TreeNode(slow.val);
+        root.left = sortedListToBST(head);
+        root.right = sortedListToBST(slow.next);
+        return root;
+
+    }
+
+    public ListNode oddEvenList1( ListNode head) {
+        if (head == null) {
+            return head;
+        }
+        ListNode evenHead = head.next;
+        ListNode odd = head, even = evenHead;
+        while (even!= null && even.next!= null) {
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+            even = even.next;
+        }
+        odd.next = evenHead;
+        return head;
+    }
+
+    /**
+     * 328. 奇偶链表
+     * @param head
+     * @return
+     */
+    public ListNode oddEvenList( ListNode head) {
+        if (head == null) return null;
+        ListNode odd = head, even = head.next;
+        while (even!= null && even.next!= null) {
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+            even = even.next;
+        }
+        odd.next = null;
+        return head;
+    }
+
+
+    /**
+     * 876. 链表的中间结点
+     * @param head
+     * @return
+     */
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (fast == slow) {
+                break;
+            }
+        }
+        return slow;
+    }
+
+    /**
+     * 86. 分隔链表
+     * @param head
+     * @param x
+     * @return
+     */
+    public ListNode partition( ListNode head, int x) {
+        ListNode dummy1 = new ListNode(0);
+        ListNode dummy2 = new ListNode(0);
+        ListNode pre1 = dummy1;
+        ListNode pre2 = dummy2;
+        while (head != null) {
+            ListNode tmp = head.next;
+            // 大于等于x的节点
+            if (head.val >= x) {
+                pre2.next = head;
+                pre2 = pre2.next;
+            } else {
+                pre1.next = head;
+                pre1 = pre1.next;
+            }
+            head.next = null;
+            head = tmp;
+        }
+        pre1.next = dummy2.next;
+        return dummy1.next;
+    }
+
+
+    /**
+     *  22. 链表中倒数第k个节点
+     * @param head
+     * @param k
+     * @return
+     */
+    public static ListNode getKthFromEnd( ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        if (k == 0) {
+            return head;
+        }
+        ListNode fast = head, slow = head;
+        for (int i = 0; i < k; i++) {
+            fast = fast.next;
+        }
+        while (fast!= null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+
+
+    public static ListNode addTwoNumbers2( ListNode l1, ListNode l2 ) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        ListNode dummy = new ListNode(0);
+        ListNode pre = dummy;
+        int carry = 0;
+        while (l1 != null || l2 != null) {
+            int sum = 0;
+            if (l1 != null) {
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                sum += l2.val;
+                l2 = l2.next;
+            }
+            sum += carry;
+            carry = sum / 10;
+            ListNode node = new ListNode(sum %10);
+            node.next = pre.next;
+            pre.next = node;
+            pre = node;
+        }
+        if (carry != 0) {
+            pre.next = new ListNode(carry);
+        }
         return dummy.next;
     }
 
