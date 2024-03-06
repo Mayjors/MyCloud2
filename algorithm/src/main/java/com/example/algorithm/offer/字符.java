@@ -15,6 +15,27 @@ public class 字符 {
     }
 
     /**
+     * 80.删除有序数组中的重复项 II
+     * @param nums
+     * @return
+     */
+    public static int removeDuplicates(int[] nums, int k) {
+        if (nums == null || nums.length <= k) return nums.length;
+        // 初始化快慢指针
+        int slow = k, fast = k;
+        while (fast < nums.length) {
+            // 如果nums[fast] 不等于nums[slow-k],则将nums[fast]复制到nums[slow]处,并且slow++
+            if (nums[fast]!= nums[fast - k]) {
+                nums[slow] = nums[fast];
+                slow++;
+            }
+            // 将fast向前移动一位，以检查下一个元素
+            fast++;
+        }
+        return slow;
+    }
+
+    /**
      * 283.移动零
      * @param nums
      */
