@@ -674,7 +674,7 @@ public class 链表 {
             if (i == j) {
                 break;
             }
-            list.get(i).next = list.get(j);
+            list.get(j).next = list.get(i);
             j--;
         }
         list.get(i).next = null;
