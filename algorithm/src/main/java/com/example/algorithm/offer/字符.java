@@ -267,6 +267,21 @@ public class 字符 {
         return ans;
     }
 
+    public int lengthOfLongestSubstring1(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int left = 0, right = 0, ans = 0;
+        while (right < s.length()) {
+            while (left < right && s.charAt(left)!= s.charAt(right)) {
+                left++;
+            }
+            ans = Math.max(ans, right - left + 1);
+            right++;
+        }
+        return ans;
+    }
+
     /**
      * 15. 三数之和
      * @param nums
@@ -613,6 +628,29 @@ public class 字符 {
         return dp[n];
     }
 
+    /**
+     * 209.长度最小的子数组
+     * @param target
+     * @param nums
+     * @return
+     */
+    public int minSubArrayLen(int target, int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int left = 0, right = 0;
+        int sum = 0;
+        while (right < nums.length) {
+            sum += nums[right];
+            while (sum >= target) {
+                sum -= nums[left];
+                left++;
+            }
+            right++;
+        }
+        return right - left + 1;
+    }
+
 
     /**
      * 4. 寻找两个正序数组的中位数
@@ -717,6 +755,75 @@ public class 字符 {
             }
         }
         return dp[m][n];
+    }
+
+    /**
+     * 643.子数组最大平均数 I
+     * @param nums
+     * @param k
+     * @return
+     */
+    public double findMaxAverage(int[] nums, int k) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0.0;
+        }
+        if (len == 1) {
+            return nums[0];
+        }
+//        int[] sums = new int[len];
+//        for (int i = 0; i < len; i++) {
+//            sums[i] = i == 0? nums[i] : sums[i-1] + nums[i];
+//        }
+//        int maxSum = 0;
+//        for (int i = 0; i < len; i++) {
+//            maxSum = Math.max(maxSum, sums[i]);
+//            if (i >= k) {
+//                maxSum = Math.max(maxSum, sums[i] - sums[i-k]);
+//            }
+//        }
+//        return (double) maxSum / k;
+        int sum = 0;
+        for (int i = 0; i < k; i++) {
+            sum += nums[i];
+        }
+        int maxSum = sum;
+        for (int i = k; i<= len; i++) {
+            sum = sum - nums[i-k] + nums[i];
+            maxSum = Math.max(maxSum, sum);
+        }
+        return (double) maxSum / k;
+    }
+
+    /**
+     * 219.存在重复元素 II
+     * @param nums
+     * @param k
+     * @return
+     */
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        int len = nums.length;
+//        for (int i = 0; i< len-1; i++) {
+//            for (int j = i+1; j< len; j++) {
+//                if (nums[i] == nums[j] && Math.abs(nums[i]-nums[j]) <= k) {
+//                    return true;
+//                }
+//            }
+//        }
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i< len; i++) {
+            // 维护滑动窗口大小
+            if (i > k) {
+                // 将窗口中最左端的元素移除
+                set.remove(nums[i-k-1]);
+            }
+            if (set.contains(nums[i])) {
+                return true;
+            } else {
+                set.add(nums[i]);
+            }
+        }
+        return false;
     }
 
     /**

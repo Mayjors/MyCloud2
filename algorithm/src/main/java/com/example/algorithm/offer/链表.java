@@ -145,6 +145,28 @@ public class 链表 {
         return head;
     }
 
+    /**
+     * 24.两两交换链表中的节点
+     * @param head
+     * @return
+     */
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        while (pre.next!= null && pre.next.next!= null) {
+            ListNode cur = pre.next;
+            ListNode next = cur.next;
+            pre.next = next;
+            cur.next = next.next;
+            next.next = cur;
+            pre = cur;
+        }
+        return dummy.next;
+    }
 
     /**
      * 876. 链表的中间结点
