@@ -12,6 +12,21 @@ public class 字符 {
         System.out.println(longestValidParentheses(")(()"));
         System.out.println(findMedianSortedArrays2(new int[]{1, 3, 5}, new int[]{2, 4}));
         System.out.println(restoreIpAddresses("255255255255"));
+        System.out.println(missingNumber(new int[]{3, 0, 1}));
+    }
+
+    public static int missingNumber(int[] nums) {
+        int len = nums.length;
+        int[] d = new int[nums.length +1];
+        for (int i=0; i<len; i++) {
+            d[nums[i]] = 1;
+        }
+        for (int i : d) {
+            if (i == 0) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -33,6 +48,24 @@ public class 字符 {
             fast++;
         }
         return slow;
+    }
+
+    /**
+     * 392.判断子序列
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isSubsequence(String s, String t) {
+        int i = 0, j = 0;
+        int len1 = s.length(), len2 = t.length();
+        while (i < len1 && j < len2) {
+            if (s.charAt(i) == t.charAt(j)) {
+                i++;
+            }
+            j++;
+        }
+        return i == len1;
     }
 
     /**
@@ -83,6 +116,171 @@ public class 字符 {
             sum += digit * digit;
         }
         return sum;
+    }
+
+    /**
+     * 289.生命游戏
+     * @param board
+     */
+    public void gameOfLife(int[][] board) {
+        int[][] copy = new int[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j <board[0].length; j++) {
+                copy[i][j] = board[i][j];
+            }
+        }
+        // 计算board数组的每个元素周围的活细胞数量
+        int count = 0;
+        // 遍历board数组的每个元素
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                // 计算周围的活细胞数量
+                count = 0;
+                // 行和列的范围是i-1到i+1, j-1到j+1
+                for (int k = i - 1; k <= i + 1; k++) {
+                    for (int l = j - 1; l <= j + 1; l++) {
+                        if (k >= 0 && k < board.length && l >= 0 && l < board[0].length && (k != i || l != j)) {
+                            if (copy[k][l] == 1) {
+                                count++;
+                            }
+                        }
+                    }
+                }
+                if (copy[i][j] == 1) {
+                    if (count < 2 || count > 3) {
+                        board[i][j] = 0;
+                    }
+                } else {
+                    if (count == 3) {
+                        board[i][j] = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 187.重复的DNA序列
+     * @param s
+     * @return
+     */
+    public List<String> findRepeatedDnaSequences(String s) {
+        List<String> ans = new ArrayList<>();
+        int n = s.length();
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i +10 <= n; i++) {
+            String sub = s.substring(i, i + 10);
+            int cnt = map.getOrDefault(sub, 0);
+            if (cnt == 1) {
+                ans.add(sub);
+            }
+            map.put(sub, cnt + 1);
+        }
+        return ans;
+    }
+
+    /**
+     * 443.压缩字符串
+     * @param chars
+     * @return
+     */
+    public int compress(char[] chars) {
+        if (chars == null) return 0;
+        if (chars.length <= 1) return chars.length;
+        int write = 0, start = 0;
+        for (int i = 1; i < chars.length; i++) {
+            if (i == chars.length - 1 || chars[i]!= chars[i - 1]) {
+                chars[write++] = chars[i];
+                // 子串长度
+                int len = i - start + 1;
+                if (len > 1) {
+                    String str = String.valueOf(len);
+                    for (int j = 0; j < str.length(); j++) {
+                        chars[write++] = str.charAt(j);
+                    }
+                }
+                // 更新下一个子串的起点
+                start = i + 1;
+            }
+        }
+        return write;
+    }
+
+    public int magicalString(int n) {
+        char[] s = new char[n+2];
+        s[0] = 1;
+        s[1] = s[2] = 2;
+        char c = 2;
+        for (int i = 2, j = 3; j < n; ++i) {
+            c ^= 3; // 1^3 = 2, 2 ^3 = 1,这样就能在1和2之间转换
+            s[j++] = c;
+            if (s[i] == 2) s[j++] = c;
+        }
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+//            if (s[i] == 1) ++ans;
+            ans += 2 - s[i];
+        }
+        return ans;
+    }
+
+    /**
+     * 42. 接雨水
+     * @param height
+     * @return
+     */
+    public static int trap(int[] height) {
+        int len = height.length;
+        int res = 0;
+        for (int i = 0; i < len - 1; i++) {
+            int leftMax = 0, rightMax = 0;
+            for (int j = i; j >= 0; j--) {
+                leftMax = Math.max(leftMax, height[j]);
+            }
+            for (int j = i + 1; j < len; j++) {
+                rightMax = Math.max(rightMax, height[j]);
+            }
+            res += Math.min(leftMax, rightMax) - height[i];
+        }
+        return res;
+    }
+
+    public static int trap2(int[] height) {
+        int len = height.length;
+        int res = 0;
+        int left = 0, right = len - 1;
+        int leftMax = 0, rightMax = 0;
+        while (left < right) {
+            leftMax = Math.max(leftMax, height[left]);
+            rightMax = Math.max(rightMax, height[right]);
+            if (leftMax < rightMax) {
+                res += leftMax - height[left];
+                left++;
+            } else {
+                res += rightMax - height[right];
+                right--;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 896.单调数列
+     * @param nums
+     * @return
+     */
+    public boolean isMonotonic(int[] nums) {
+        int len = nums.length;
+        boolean inc = true, dec = true;
+        for (int i = 1; i < len; i++) {
+            if (nums[i - 1] > nums[i]) {
+                inc = false;
+            }
+            if (nums[i - 1] < nums[i]) {
+                dec = false;
+            }
+        }
+        return inc || dec;
     }
 
     /**
@@ -207,6 +405,10 @@ public class 字符 {
         return -1;
     }
 
+    /**
+     * 31.下一个排列
+     * @param nums
+     */
     public static void nextPermutation(int[] nums) {
         int len = nums.length;
         for (int i = len -1; i > 0; i--) {
@@ -246,6 +448,69 @@ public class 字符 {
         Arrays.sort(nums);
     }
 
+    /**
+     * 287.寻找重复数
+     * @param nums
+     * @return
+     */
+    public int findDuplicate(int[] nums) {
+        int slow = 0, fast = 0;
+        while (nums[fast]!= nums[nums[fast]]) {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }
+        while (slow!= fast) {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }
+        return slow;
+    }
+
+    public int findDuplicate2(int[] nums) {
+        int len = nums.length;
+        int left = 1, right = len - 1;
+        int res = -1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int count = 0;
+            for (int num : nums) {
+                if (num <= mid) {
+                    count++;
+                }
+            }
+            if (count <= mid) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+                res = mid;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 189.轮转数组
+     * @param nums
+     * @param k
+     */
+    public void rotate(int[] nums, int k) {
+        int len = nums.length;
+        k %= len;
+        if (k == 0) return;
+        reverse(nums, 0, len - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, len - 1);
+    }
+
+    private void reverse(int[] nums, int start, int end) {
+        while (start <end) {
+            int temp = nums[end];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
 
     /**
      * 3. 无重复字符的最长子串
@@ -280,6 +545,28 @@ public class 字符 {
             right++;
         }
         return ans;
+    }
+
+    public List<List<Integer>> twoSum(int[] nums, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (null == null || nums.length == 0) return res;
+        Arrays.sort(nums);
+        int left = 0, right = nums.length -1;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                res.add(Arrays.asList(nums[left], nums[right]));
+                while (left < right && nums[left] ==nums[left+1]) left++;
+                while (left < right && nums[right] ==nums[right-1]) right--;
+                left++;
+                right--;
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return res;
     }
 
     /**
@@ -793,6 +1080,32 @@ public class 字符 {
             maxSum = Math.max(maxSum, sum);
         }
         return (double) maxSum / k;
+    }
+
+    /**
+     * 658. 找到 K 个最接近的元素
+     * @param arr
+     * @param k
+     * @param x
+     * @return
+     */
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        int size = arr.length;
+        int left = 0, right = size -1;
+        int removeNums = size - k;
+        while (removeNums > 0) {
+            if (Math.abs(arr[left] - x) > Math.abs(arr[right] - x)) {
+                left++;
+            } else {
+                right--;
+            }
+            removeNums--;
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int i = left; i <= right; i++) {
+            res.add(arr[i]);
+        }
+        return res;
     }
 
     /**

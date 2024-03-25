@@ -146,29 +146,6 @@ public class 链表 {
     }
 
     /**
-     * 24.两两交换链表中的节点
-     * @param head
-     * @return
-     */
-    public ListNode swapPairs(ListNode head) {
-        if (head == null || head.next == null) {
-            return head;
-        }
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        ListNode pre = dummy;
-        while (pre.next!= null && pre.next.next!= null) {
-            ListNode cur = pre.next;
-            ListNode next = cur.next;
-            pre.next = next;
-            cur.next = next.next;
-            next.next = cur;
-            pre = cur;
-        }
-        return dummy.next;
-    }
-
-    /**
      * 876. 链表的中间结点
      * @param head
      * @return
@@ -183,6 +160,25 @@ public class 链表 {
             }
         }
         return slow;
+    }
+
+    public ListNode partition3( ListNode head, int x) {
+        ListNode dummy1 = new ListNode(0);
+        ListNode dummy2 = new ListNode(0);
+        ListNode l = dummy1, r = dummy2;
+        while (head!= null) {
+            if (head.val < x) {
+                l.next = head;
+                l = l.next;
+            } else {
+                r.next = head;
+                r = r.next;
+            }
+            head = head.next;
+        }
+        l.next = dummy2.next;
+        r.next = null;
+        return dummy1.next;
     }
 
     /**
@@ -483,6 +479,29 @@ public class 链表 {
             // 后续节点的后续指向前驱节点的后续
             next.next = pre.next;
             pre.next = next;
+        }
+        return dummy.next;
+    }
+
+    /**
+     * 24.两两交换链表中的节点
+     * @param head
+     * @return
+     */
+    public ListNode swapPairs2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        while (pre.next!= null && pre.next.next!= null) {
+            ListNode cur = pre.next;
+            ListNode next = cur.next;
+            pre.next = next;
+            cur.next = next.next;
+            next.next = cur;
+            pre = cur;
         }
         return dummy.next;
     }
