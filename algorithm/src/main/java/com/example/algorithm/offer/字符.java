@@ -9,7 +9,7 @@ public class 字符 {
         System.out.println(isValid("(}"));
         System.out.println(maxArea(new int[] {1,8,6,2,5,4,8,3,7}));
         System.out.println(generateParenthesis2(3));
-        System.out.println(longestValidParentheses(")(()"));
+        System.out.println(longestValidParentheses("))(()"));
         System.out.println(findMedianSortedArrays2(new int[]{1, 3, 5}, new int[]{2, 4}));
         System.out.println(restoreIpAddresses("255255255255"));
         System.out.println(missingNumber(new int[]{3, 0, 1}));
@@ -331,6 +331,43 @@ public class 字符 {
         return p+1;
     }
 
+    public List<List<String>> groupAnagrams(String[] strs) {
+//        List<List<String>> res = new ArrayList<>();
+//        if (strs == null || strs.length == 0) return res;
+//        Map<String, List<String>> map = new HashMap<>();
+//        for (String str : strs) {
+//            char[] chars = str.toCharArray();
+//            Arrays.sort(chars);
+//            String key = new String(chars);
+//            if (map.containsKey(key)) {
+//                map.get(key).add(str);
+//            } else {
+//                List<String> list = new ArrayList<>();
+//                list.add(str);
+//                map.put(key, list);
+//                res.add(list);
+//            }
+//        }
+//        return res;
+        List<List<String>> res = new ArrayList<>();
+        if (strs == null || strs.length == 0) return res;
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String keys = new String(chars);
+            if (map.containsKey(keys)) {
+                map.get(keys).add(str);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(str);
+                map.put(keys, list);
+                res.add(list);
+            }
+        }
+        return res;
+    }
+
     /**
      * 121. 买卖股票的最佳时机
      * @param prices
@@ -346,8 +383,41 @@ public class 字符 {
         return max;
     }
 
+    /**
+     * 402. 移掉 K 位数字
+     * @param num
+     * @param k
+     * @return
+     */
+    public String removeKdigits(String num, int k) {
+        Deque<Character> stack = new ArrayDeque<>(num.length());
+        for (char c : num.toCharArray()) {
+            while (k > 0 && !stack.isEmpty() && c < stack.peek()) {
+                stack.pop();
+                k--;
+            }
+            if (c != '0' || !stack.isEmpty()) {
+                stack.push(c);
+            }
+        }
+        while (k > 0 && !stack.isEmpty()) {
+            stack.pop();
+            k--;
+        }
+        StringBuffer str = new StringBuffer();
+        while (!stack.isEmpty()) {
+            str.append(stack.pollLast());
+        }
+        return str.length() == 0 ? "0" : str.toString();
+    }
+
+    /**
+     * 32. 最长有效括号
+     * @param s
+     * @return
+     */
     public static int longestValidParentheses(String s) {
-        if (s == null || s.length() == 0) return 0;
+        if (s == null || s.isEmpty()) return 0;
         Deque<Integer> stack = new ArrayDeque<>();
         stack.push(-1);
         int res = 0;
@@ -370,6 +440,35 @@ public class 字符 {
         return res;
     }
 
+    public int longestValidParentheses2(String s) {
+        int left = 0, right = 0, maxLen =0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                left++;
+            } else {
+                right++;
+            }
+            if (left == right) {
+                maxLen = Math.max(maxLen, right * 2);
+            } else if (right > left) {
+                left = right = 0;
+            }
+        }
+        left = right = 0;
+        for (int i = s.length() - 1; i>= 0; i--) {
+            if (s.charAt(i) == '(') {
+                left++;
+            } else {
+                right++;
+            }
+            if (left == right) {
+                maxLen = Math.max(maxLen, right * 2);
+            } else if (right > left) {
+                left = right = 0;
+            }
+        }
+        return maxLen;
+    }
 
     /**
      * 33. 搜索旋转排序数组
@@ -937,7 +1036,6 @@ public class 字符 {
         }
         return right - left + 1;
     }
-
 
     /**
      * 4. 寻找两个正序数组的中位数
