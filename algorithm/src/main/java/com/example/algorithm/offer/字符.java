@@ -13,6 +13,101 @@ public class 字符 {
         System.out.println(findMedianSortedArrays2(new int[]{1, 3, 5}, new int[]{2, 4}));
         System.out.println(restoreIpAddresses("255255255255"));
         System.out.println(missingNumber(new int[]{3, 0, 1}));
+
+        int[][] nums={{3,1,2,4,5},{1,2,3,4},{3,4,5,6}};
+        System.out.println(intersection1(nums).toString());
+
+        rotate2(new int[]{1, 2, 3, 4, 5, 6, 7}, 3);
+
+    }
+
+    public static List<Integer> intersection(int[][] nums) {
+        List<Integer> list=new LinkedList<>();//计数排序的思想
+        int[] a=new int[1001];
+        for(int[] row:nums) {//从每一行中获取元素内容
+            for(int data:row){//从遍历的每行中，在逐个遍历每一列的元素。
+                a[data]++;
+            }
+        }
+        for (int i = 0; i <a.length ; i++) {
+            if (nums.length==a[i]){
+                list.add(i);
+            }
+        }
+        return list;
+    }
+
+    public static List<Integer> intersection1(int[][] nums) {
+        Map<Integer,Integer> map=new HashMap<>();//计数排序的思想
+        for(int[] row:nums) {//从每一行中获取元素内容
+            for (int data : row) {//从遍历的每行中，在逐个遍历每一列的元素。
+                map.put(data, map.getOrDefault(data, 0) + 1);
+            }
+        }
+        List<Integer> list=new LinkedList<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == nums.length) {
+                list.add(entry.getKey());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 242. 两个字符串包含的字符是否完全相同
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isAnagram(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        int[] d = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            d[s.charAt(i) - 'a']++;
+            d[t.charAt(i) - 'a']--;
+        }
+        for (int i = 0; i < 26; i++) {
+            if (d[i] != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 数组中出现次数超过一半的数字
+     * @param nums
+     * @return
+     */
+    public int majorityElement(int[] nums) {
+        int len = nums.length;
+        int[] d = new int[len + 1];
+        for (int i = 0; i < len; i++) {
+            d[nums[i]]++;
+            if (d[nums[i]] > len / 2) {
+                return nums[i];
+            }
+        }
+        return 0;
+    }
+
+    public int majorityElement2(int[] nums) {
+        int res = 0, count = 0;
+        for (int num : nums) {
+            if (count == 0) {
+                res = num;
+                count++;
+                continue;
+            }
+            if (num == res) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return res;
     }
 
     public static int missingNumber(int[] nums) {
@@ -28,6 +123,110 @@ public class 字符 {
         }
         return 0;
     }
+
+    /**
+     * 替换空格
+     * @param str
+     * @return
+     */
+    public String replaceSpace(StringBuffer str) {
+        int len = str.length();
+        for (int i=0; i<len; i++) {
+            if (str.charAt(i) ==' ') {
+                str.replace(i, i+1, "%20");
+            }
+        }
+        return str.toString();
+    }
+
+
+
+    /**
+     * 统计一个数字在排序数组中出现的次数
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static int getNumberOfK(int[] nums, int k) {
+        int left = binarySearch(nums, k);
+        if (nums[left] != k) {
+            return 0;
+        }
+        int right = binarySearch(nums, k+1);
+        return right - left;
+    }
+
+    private static int binarySearch(int[] nums, int k) {
+        int left = 0, right = nums.length -1;
+        while (left < right) {
+            int mid = left + ((right - left) >>1);
+            if (nums[mid] >= k) {
+                right = mid;
+            } else {
+                left = mid;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 53.最大子数组和
+     * @param nums
+     * @return
+     */
+    public int maxSubArray(int[] nums) {
+//        int max = nums[0];
+//        int sum = 0;
+//        for (int i=0; i<nums.length; i++) {
+//            sum += nums[i];
+//            max = Math.max(max, sum);
+//            if (sum < 0) {
+//                sum = 0;
+//            }
+//        }
+//        return max;
+        int pre = 0;
+        int res = nums[0];
+        for (int num : nums) {
+            pre = Math.max(pre + num, num);
+            res = Math.max(res, pre);
+        }
+        return res;
+    }
+
+    /**
+     * 调整数组顺序使奇数位于偶数前面
+     * @param array
+     */
+    public static void reOrderArray(int[] array) {
+        int left = 0;
+        int right = array.length-1;
+        while (left < right) {
+            while (left < right && (array[left] & 1) == 1) {
+                left++;
+            }
+            while (left < right && (array[right] & 1) == 0) {
+                right--;
+            }
+            int tmp = array[left];
+            array[left] = array[right];
+            array[right] = tmp;
+        }
+    }
+
+    public static void reOrderArray2(int[] array) {
+        int fast = 0, slow = 0;
+        while (fast < array.length) {
+            if ((array[fast] & 1) == 1) {
+                int tmp = array[fast];
+                array[fast] = array[slow];
+                array[slow] = tmp;
+                slow++;
+            }
+            fast++;
+        }
+    }
+
 
     /**
      * 80.删除有序数组中的重复项 II
@@ -206,6 +405,59 @@ public class 字符 {
         return write;
     }
 
+    /**
+     * 633.平方数之和
+     * @param c
+     * @return
+     */
+    public boolean judgeSquareSum(int c) {
+        int left = 0, right = (int) Math.sqrt(c);
+        while (left <= right) {
+            int sum = left * left + right * right;
+            if (sum == c) {
+                return true;
+            } else if (sum > c) {
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 524.通过删除字母匹配到字典里最长单词
+     * 给你一个字符串 s 和一个字符串数组 dictionary ，找出并返回 dictionary 中最长的字符串，该字符串可以通过删除 s 中的某些字符得到。
+     * @param s
+     * @param dictionary
+     * @return
+     */
+    public String findLongestWord(String s, List<String> dictionary) {
+        dictionary.sort((a, b) -> {
+            if (a.length() != b.length()) {
+                return b.length() - a.length();
+            } else {
+                return a.compareTo(b);
+            }
+        });
+        String ans = "";
+        for (String t : dictionary) {
+            int i = 0, j = 0;
+            while (i < s.length() && j < t.length()) {
+                if (s.charAt(i) == t.charAt(j)) {
+                    j++;
+                }
+                i++;
+            }
+            if (j == t.length()) {
+                if (t.length() > ans.length() || (t.length() == ans.length() && t.compareTo(ans) < 0)) {
+                    ans = t;
+                }
+            }
+        }
+        return ans;
+    }
+
     public int magicalString(int n) {
         char[] s = new char[n+2];
         s[0] = 1;
@@ -312,6 +564,32 @@ public class 字符 {
     }
 
     /**
+     * 977.有序数组的平方
+     * @param nums
+     * @return
+     */
+    public int[] sortedSquares(int[] nums) {
+//        int[] ans = new int[nums.length];
+//        for (int i = 0; i < nums.length; i++) {
+//            ans[i] = nums[i] * nums[i];
+//        }
+//        Arrays.sort(ans);
+//        return ans;
+        int left = 0;
+        int right = nums.length - 1;
+        int[] ans = new int[nums.length];
+        while (left <= right) {
+            if (nums[left] * nums[left] < nums[right] * nums[right]) {
+                ans[right] = nums[left] * nums[left];
+                left++;
+            } else {
+                ans[right--] = nums[right] * nums[right];
+            }
+        }
+        return ans;
+    }
+
+    /**
      * 26.删除有序数组中的重复项
      * @param nums
      * @return
@@ -376,9 +654,9 @@ public class 字符 {
     public int maxProfit(int[] prices) {
         int min = prices[0];
         int max = 0;
-        for (int i = 0; i < prices.length; i++) {
-            min = Math.min(prices[i], min);
-            max = Math.max(max, prices[i] - min);
+        for (int price : prices) {
+            min = Math.min(price, min);
+            max = Math.max(max, price - min);
         }
         return max;
     }
@@ -528,6 +806,7 @@ public class 字符 {
         Arrays.sort(nums);
     }
 
+
     public static void nextPermutation2(int[] nums) {
         int len = nums.length;
         // 从后向前查找第一个相邻升序的元素对 (i, i+1)，满足 nums[i] < nums[i+1]。此时 [i+1,end) 必然是降序
@@ -587,6 +866,19 @@ public class 字符 {
         return res;
     }
 
+    public int findDuplicate3(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i : nums) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > 1) {
+                return entry.getKey();
+            }
+        }
+        return 0;
+    }
+
     /**
      * 189.轮转数组
      * @param nums
@@ -608,6 +900,20 @@ public class 字符 {
             nums[end] = temp;
             start++;
             end--;
+        }
+    }
+
+    /**
+     * 189.轮转数组
+     * @param nums
+     * @param k
+     */
+    public static void rotate2(int[] nums, int k) {
+        int len = nums.length;
+        k %= len;
+        int[] temp = Arrays.copyOf(nums, len);
+        for (int i = 0; i < len; i++) {
+            nums[(i + k) % len] = temp[i];
         }
     }
 
@@ -697,6 +1003,28 @@ public class 字符 {
             }
         }
         return result;
+    }
+
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int res = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.length - 2; i++) {
+            int j = i + 1, k = nums.length - 1;
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                if (Math.abs(sum - target) < Math.abs(res - target)) {
+                    res = sum;
+                }
+                if (sum == target) {
+                    return res;
+                } else if (sum > target) {
+                    k--;
+                } else {
+                    j++;
+                }
+            }
+        }
+        return res;
     }
 
     /**
@@ -859,6 +1187,29 @@ public class 字符 {
     }
 
     /**
+     * 409. 计算一组字符集合可以组成的回文字符串的最大长度
+     * @param s
+     * @return
+     */
+    public int longestPalindromeAll(String s) {
+        int[] arr = new int[128];
+//        for (int i = 0; i < s.length(); i++) {
+//            arr[s.charAt(i)]++;
+//        }
+        for (char c : s.toCharArray()) {
+            arr[c]++;
+        }
+        int res = 0;
+        for (int i : arr) {
+            res += i / 2 * 2;
+            if (res % 2 == 0 && i % 2 == 1) {
+                res++;
+            }
+        }
+        return res;
+    }
+
+    /**
      * 5. 最长回文子串
      * @param s
      * @return
@@ -1012,6 +1363,72 @@ public class 字符 {
             }
         }
         return dp[n];
+    }
+
+    public String longestCommonPrefix(String[] strs) {
+        if (strs == null || strs.length == 0) {
+            return "";
+        }
+        String ans = strs[0];
+        for(String s : strs) {
+            if (ans.length() > s.length()) {
+                ans = s;
+            }
+        }
+        for (int i = 0; i < strs.length; i++) {
+            for (int j = 0; j < strs[i].length(); j++) {
+                if (strs[i].charAt(j) != ans.charAt(j)) {
+                    ans = ans.substring(0, j);
+                    break;
+                }
+            }
+        }
+        if (ans.isEmpty()) {
+            return ans;
+        }
+        return ans;
+    }
+
+
+    /**
+     * 搜索插入位置
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length-1;
+        while (left <= right) {
+            int mid = left + (right-left)/2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 寻找数组的中心索引
+     * @param nums
+     * @return
+     */
+    public int pivotIndex(int[] nums) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        int tag = 0;
+        for (int i =0; i< nums.length; i++) {
+            if (tag + nums[i] == sum - tag) {
+                return i;
+            }
+            tag += nums[i];
+        }
+        return -1;
     }
 
     /**

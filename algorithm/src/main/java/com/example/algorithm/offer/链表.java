@@ -420,6 +420,19 @@ public class 链表 {
         return newHead;
     }
 
+    public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
+        ArrayList<Integer> res = new ArrayList<>();
+        while (listNode!= null) {
+            res.add(listNode.val);
+            listNode = listNode.next;
+        }
+        ArrayList<Integer> ress = new ArrayList();
+        for(int i = res.size()-1; i >= 0; i--){
+            ress.add(res.get(i));
+        }
+        return res;
+    }
+
     /**
      * 206. 反转链表
      * 反转一个单链表。

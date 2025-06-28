@@ -1,42 +1,113 @@
 package com.example.algorithm.zijie;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LRUCache {
-    int cap;
-    LinkedHashMap<Integer, Integer> cache = new LinkedHashMap<>();
-    public LRUCache(int capacity) {
-        this.cap = capacity;
-    }
+    Entry head, tail;
+    int capacity;
+    int size;
+    Map<Integer, Entry> cache;
 
-    public int get(int key) {
-        if (!cache.containsKey(key)) {
-            return -1;
-        }
-        makeRecently(key);
-        return cache.get(key);
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        initLinkedList();
+        size = 0;
+        cache = new HashMap<>(capacity);
     }
 
     public void put(int key, int value) {
-        if (cache.containsKey(key)) {
-            // 修改key的值
-            cache.put(key, value);
-            makeRecently(key);
+        Entry node = cache.get(key);
+        if (node != null) {
+            node.value = value;
+            moveToHead(node);
             return;
         }
-        if (cache.size() >= this.cap) {
-            int oldKey = cache.keySet().iterator().next();
-            cache.remove(oldKey);
+        if (size == capacity) {
+            Entry lastNode = tail.pre;
+            deleteNode(lastNode);
+            cache.remove(lastNode.key);
+            size--;
         }
-        // 将新的 key 添加链表尾部
-        cache.put(key, value);
+
+        Entry newNode = new Entry(key, value);
+        addNode(newNode);
+        cache.put(key, newNode);
+        size++;
     }
 
-    private void makeRecently(int key) {
-        int val = cache.get(key);
-        // 删除 key，重新插入到队尾
-        cache.remove(key);
-        cache.put(key, val);
+    public Integer get(int key) {
+        Entry node = cache.get(key);
+        if (node == null) {
+            return null;
+        }
+        moveToHead(node);
+        return node.value;
     }
 
+    private void moveToHead(Entry node) {
+        deleteNode(node);
+        addNode(node);
+    }
+
+    public void addNode(Entry node) {
+        head.next.pre = node;
+        node.next = head.next;
+
+        node.pre = head;
+        head.next = node;
+    }
+
+    private void deleteNode(Entry node) {
+        node.pre.next = node.next;
+        node.next.pre = node.pre;
+    }
+
+    private void initLinkedList() {
+        head = new Entry();
+        tail = new Entry();
+
+        head.next = tail;
+        tail.pre = head;
+    }
+
+
+    private static class Entry {
+        int key;
+        int value;
+        Entry pre;
+        Entry next;
+
+        public Entry(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public Entry() {
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "key=" + key +
+                    ", value=" + value +
+                    '}';
+        }
+    }
+
+    public static void main(String[] args) {
+        LRUCache cache1 = new LRUCache(2);
+        cache1.put(1, 1);
+        cache1.put(2, 2);
+
+        System.out.println("get(1)之后的头结点之前的节点: "+cache1.head.next);
+        System.out.println("get(1)节点: "+cache1.get(1));
+        System.out.println("get(1)之后的头结点之后的节点: "+cache1.head.next);
+
+        cache1.put(3, 3);
+        System.out.println("put(3)之后的头结点之后的节点: "+cache1.head.next);
+
+        System.out.println("get(2)节点: "+cache1.get(2));
+        System.out.println("get(2)之后的头结点之后的节点: "+cache1.head.next);
+    }
 }
