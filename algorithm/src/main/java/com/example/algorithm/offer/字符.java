@@ -112,9 +112,9 @@ public class 字符 {
 
     public static int missingNumber(int[] nums) {
         int len = nums.length;
-        int[] d = new int[nums.length +1];
-        for (int i=0; i<len; i++) {
-            d[nums[i]] = 1;
+        int[] d = new int[len +1];
+        for (int num : nums) {
+            d[num] = 1;
         }
         for (int i : d) {
             if (i == 0) {
@@ -122,6 +122,24 @@ public class 字符 {
             }
         }
         return 0;
+    }
+
+    /**
+     * 66.加一
+     * @param digits
+     * @return
+     */
+    public int[] plusOne(int[] digits) {
+        for (int i = digits.length - 1; i>=0; i--) {
+            digits[i] ++;
+            digits[i] = digits[i] % 10;
+            if (digits[i] != 0) {
+                return digits;
+            }
+        }
+        digits = new int[digits.length +1];
+        digits[0] = 1;
+        return digits;
     }
 
     /**
@@ -805,7 +823,6 @@ public class 字符 {
         }
         Arrays.sort(nums);
     }
-
 
     public static void nextPermutation2(int[] nums) {
         int len = nums.length;
