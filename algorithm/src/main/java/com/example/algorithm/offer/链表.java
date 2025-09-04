@@ -562,7 +562,7 @@ public class 链表 {
         }
         while (fast.next != null) {
             slow = slow.next;
-            fast = fast.next.next;
+            fast = fast.next;
         }
         // 删除倒数第n个节点
         slow.next = slow.next.next;
