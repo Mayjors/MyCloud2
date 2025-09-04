@@ -18,7 +18,91 @@ public class 字符 {
         System.out.println(intersection1(nums).toString());
 
         rotate2(new int[]{1, 2, 3, 4, 5, 6, 7}, 3);
+        System.out.println(Arrays.toString(decrypt(new int[]{1, 2, 3, 4}, 0)));
+        System.out.println(isPalindrome("A man, a plan, a canal: Panama"));
+        System.out.println(sortedSquares3(new int[] {-4,-1,0,3,10}));
+    }
 
+    /**
+     * 3. 无重复字符的最长子串
+     * @param s
+     * @return
+     */
+    public int lengthOfLongestSubstring2(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        Map<Character, Integer> map = new HashMap<>();
+        int max = 0;
+        int left = 0;
+        for (int i = 0; i<s.length(); i++) {
+            if (map.containsKey(s.charAt(i))) {
+                left = Math.max(left, map.get(s.charAt(i)) +1);
+            }
+            map.put(s.charAt(i), i);
+            max = Math.max(max, i - left+1);
+        }
+        return max;
+    }
+
+    /**
+     * 567. 字符串的排列
+     * @param code
+     * @param k
+     * @return
+     */
+    public static int[] decrypt(int[] code, int k) {
+        int len = code.length;
+        int[] ans = new int[len];
+        int r = k >0 ? k+1 : len;
+        k = Math.abs(k);
+        int s = 0;
+        for (int i = r-k; i<r; i++) {
+            // 计算ans
+            s += code[i];
+        }
+        for (int i = 0; i<len; i++) {
+            ans[i] = s;
+            s += code[r %len] - code[(r-k)%len];
+            r++;
+        }
+        return ans;
+    }
+
+    /**
+     * 567. 字符串的排列
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public boolean checkInclusion(String s1, String s2) {
+        int m = s1.length();
+        if (m > s2.length()) {
+            return false;
+        }
+        // 统计s1的每种字母出现次数
+        int[] cntS1 = new int[26];
+        for (char c : s1.toCharArray()) {
+            cntS1[c-'a']++;
+        }
+        char[] s = s2.toCharArray();
+        // 对于s2的长为m的子串t，统计t的每种字母的出现次数
+        int[] cntT = new int[26];
+        for (int i = 0; i < s.length; i++) {
+            // 1。进入窗口
+            cntT[s[i] - 'a']++;
+            if (i < m-1) {
+                // 窗口大小不足m
+                continue;
+            }
+            // 2.判断子串t的每种字母的出现次数是否均与s1相同
+            if (Arrays.equals(cntS1, cntT)) {
+                return true;
+            }
+            // 离开端口，为下一个循环做准备
+            cntT[s[i-m+1] -'a']--;
+        }
+        return false;
     }
 
     public static List<Integer> intersection(int[][] nums) {
@@ -565,10 +649,11 @@ public class 字符 {
 
     /**
      * 977.有序数组的平方
+     * ******* 该方法有问题
      * @param nums
      * @return
      */
-    public int[] sortedSquares(int[] nums) {
+    public static int[] sortedSquares(int[] nums) {
 //        int[] ans = new int[nums.length];
 //        for (int i = 0; i < nums.length; i++) {
 //            ans[i] = nums[i] * nums[i];
@@ -585,6 +670,60 @@ public class 字符 {
             } else {
                 ans[right--] = nums[right] * nums[right];
             }
+        }
+        return ans;
+    }
+
+    /**
+     * 977. 有序数组的平方
+     * 输入：nums = [-4,-1,0,3,10]
+     * 输出：[0,1,9,16,100]
+     * @param nums
+     * @return
+     */
+    public int[] sortedSquares2(int[] nums) {
+        int len = nums.length;
+        int negative = -1;
+        for (int i = 0; i< len; i++) {
+            // 得到最后一个为负数的位置
+            if (nums[i] < 0) {
+                negative = i;
+            } else {
+                break;
+            }
+        }
+        int[] ans = new int[len];
+        int index = 0, i = negative, j = negative +1;
+        while (i >= 0 || j < len) {
+            if (i <0) {
+                ans[index] = nums[j] * nums[j];
+            } else if (j == len) {
+                ans[index] = nums[i] * nums[i];
+                --i;
+            } else if (nums[i] * nums[i] < nums[j] * nums[j]) {
+                ans[index] = nums[i] * nums[i];
+                --i;
+            } else {
+                ans[index] = nums[j] * nums[j];
+                ++j;
+            }
+            ++index;
+        }
+        return ans;
+    }
+
+    public static int[] sortedSquares3(int[] nums) {
+        int len = nums.length;
+        int[] ans = new int[len];
+        for (int i = 0, j = len - 1, pos = len - 1; i<=j;) {
+            if (nums[i] * nums[i] > nums[j] * nums[j]) {
+                ans[pos] = nums[i] * nums[i];
+                ++i;
+            } else {
+                ans[pos] = nums[j] * nums[j];
+                --j;
+            }
+            --pos;
         }
         return ans;
     }
@@ -644,6 +783,49 @@ public class 字符 {
             }
         }
         return res;
+    }
+
+    /**
+     * 338. 比特位计数
+     * 奇数的1一定比前面的偶数多一个1，
+     * 偶数的1 一定喝除以2后的那个数一样多
+     * @param n
+     * @return
+     */
+    public int[] countBits(int n) {
+        int[] res = new int[n];
+        res[0] = 0;
+        for (int i = 1; i<= n; i++) {
+            if (i % 2 == 1) {
+                res[i] = res[i-1] +1;
+            } else {
+                res[i] = res[i/2];
+            }
+        }
+        return res;
+    }
+
+    /**
+     * LCR 088. 使用最小花费爬楼梯
+     * @param cost 每个阶梯的花费
+     * @return
+     */
+    public int minCostClimbingStairs(int[] cost) {
+        // dp[i] = min(dp[[i-1] + cost[i-1], dp[i-2] + cost[i-2]
+        int n = cost.length;
+//        int[] dp = new int[n+1];
+//        dp[0] = dp[1] = 0;
+//        for (int i = 2; i <= n; i++) {
+//            dp[i] = Math.min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]);
+//        }
+//        return dp[n];
+        int prev = 0, curr = 0;
+        for (int i = 2; i<= n; i++) {
+            int next = Math.min(curr + cost[i-1], prev + cost[i-2]);
+            prev = curr;
+            curr = next;
+        }
+        return curr;
     }
 
     /**
@@ -915,6 +1097,56 @@ public class 字符 {
         for (int i = 0; i < len; i++) {
             nums[(i + k) % len] = temp[i];
         }
+    }
+
+    /**
+     * 713. 乘积小于 K 的子数组
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        if (k <= 1) {
+            return 0;
+        }
+        int len = nums.length;
+        int left = 0, right = 0;
+        int mul = 1, ans = 0;
+        while (right < len) {
+            mul *= nums[right];
+            while (mul >=k) {
+                mul /= nums[left];
+                left++;
+            }
+            ans += right - left +1;
+            right--;
+        }
+        return ans;
+    }
+
+    /**
+     * 125. 验证回文串
+     * 输入: s = "A man, a plan, a canal: Panama"
+     * 输出：true
+     * 解释："amanaplanacanalpanama" 是回文串
+     * @param s
+     * @return
+     */
+    public static boolean isPalindrome(String s) {
+        int left = 0 , right = s.length() - 1;
+        while (left < right) {
+            if (!Character.isLetterOrDigit(s.charAt(left))) {
+                left++;
+            } else if (!Character.isLetterOrDigit(s.charAt(right))) {
+                right--;
+            } else if (Character.toLowerCase(s.charAt(left)) == Character.toLowerCase(s.charAt(right))) {
+                left++;
+                right--;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1618,6 +1850,33 @@ public class 字符 {
         }
         List<Integer> res = new ArrayList<>();
         for (int i = left; i <= right; i++) {
+            res.add(arr[i]);
+        }
+        return res;
+    }
+
+    /**
+     * 658. 找到 K 个最接近的元素
+     * 给定一个 排序好 的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
+     * 输入：arr = [1,2,3,4,5], k = 4, x = 3
+     * 输出：[1,2,3,4]
+     * @param arr
+     * @param k
+     * @param x
+     * @return
+     */
+    public List<Integer> findClosestElements2(int[] arr, int k, int x) {
+        int len = arr.length;
+        int left = 0, right = len - k;
+        while (left < right) {
+            int mid = (left + right) /2;
+            if (x -arr[mid] > arr[mid +k] -x) {
+                left = mid +1;
+            }
+        }
+
+        List<Integer> res = new ArrayList<>();
+        for (int i = left; i<left + k; i++) {
             res.add(arr[i]);
         }
         return res;

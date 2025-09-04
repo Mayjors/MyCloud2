@@ -1,11 +1,214 @@
 package com.example.algorithm.offer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class 动态 {
     public static void main(String[] args) {
         System.out.println(deleteAndEarn2(new int[]{3, 4, 2}));
         System.out.println(longestPalindrome("babad"));
+        System.out.println(String.valueOf(generateParenthesis(5)));
+        System.out.println(trap(new int[] {0,1,0,2,1,0,1,3,2,1,2,1}));
+        System.out.println(findMaxAverage(new int[]{5}, 1));
+    }
+
+    /**
+     * 2379. 得到 K 个黑块的最少涂色次数
+     * @param blocks
+     * @param k
+     * @return
+     */
+    public int minimumRecolors(String blocks, int k) {
+//        int left = 0, right = 0;
+//        int cnt = 0;
+//        char[] chars = blocks.toCharArray();
+//        while (right < k) {
+//            cnt += blocks.charAt(right) == 'W' ? 1 : 0;
+//            right++;
+//        }
+//        int res = cnt;
+//        while (right < blocks.length()) {
+//            cnt += blocks.charAt(right) == 'W' ? 1 : 0;
+//            cnt -= blocks.charAt(left) == 'W' ? 1 : 0;
+//            res = Math.min(res, cnt);
+//            left++;
+//            right++;
+//        }
+//        return res;
+        char[] chars = blocks.toCharArray();
+        int cnt = 0;
+        for (int i = 0; i<k; i++) {
+            cnt += chars[i] & 1;
+        }
+        int ans = cnt;
+        for (int i = k; i< chars.length; i++) {
+            cnt += (chars[i] & 1) - (chars[i-k] &1);
+            ans = Math.min(ans, cnt);
+        }
+        return ans;
+    }
+
+    /**
+     * 1423. 可获得的最大点数
+     * @param cardPoints
+     * @param k
+     * @return
+     */
+    public int maxScore(int[] cardPoints, int k) {
+        int len = cardPoints.length;
+        // 华东窗口大小为n-k
+        int windowSize = len-k;
+        // 选前n-k个作为初始值
+        int sum = 0;
+        for (int i = 0; i< windowSize; i++) {
+            sum += cardPoints[i];
+        }
+        int minSum = sum;
+        for (int i = windowSize; i < len; i++) {
+            // 华东窗口每向右移动一格，增加从右侧进入窗口的元素值，并减少从左侧离开窗口的元素值
+            sum += cardPoints[i] - cardPoints[i-windowSize];
+            minSum = Math.min(minSum, sum);
+        }
+        return Arrays.stream(cardPoints).sum() - minSum;
+    }
+
+    public int[] decrypt(int[] code, int k) {
+        int n = code.length;
+        int[] ans = new int[n];
+        int r = k > 0 ? k+1 : n; // 第一个窗口的右开端点
+        k = Math.abs(k);
+        int s = 0;
+        for (int i= r-k; i < r; i++) {
+            // 计算ans[0]
+            s += code[i];
+        }
+        for (int i = 0; i< n; i++) {
+            ans[i] = s;
+            s += code[r%n] - code[(r-k) % n];
+            r++;
+        }
+        return ans;
+    }
+
+
+    /**
+     * 643. 子数组最大平均数 I
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static double findMaxAverage(int[] nums, int k) {
+        int sum = 0;
+        for (int i = 0; i< k; i++) {
+            sum += nums[i];
+        }
+        int len = nums.length;
+
+        int max = sum;
+        for (int i = k; i < len; i++) {
+            sum = sum - nums[i -k] + nums[i];
+            max = Math.max(max, sum);
+        }
+        return (double) max /k;
+    }
+
+    public static double findMaxAverage2(int[] nums, int k) {
+        int maxS = Integer.MIN_VALUE;
+        int s = 0;
+        for (int i = 0; i< nums.length; i++) {
+            // 进入窗口
+            s+= nums[i];
+            if (i < k -1) {
+                continue;
+            }
+            // 更新答案
+            maxS = Math.max(maxS, s);
+            // 离开窗口
+            s -= nums[i-k+1];
+        }
+        return (double) maxS /k;
+    }
+
+    /**
+     * 62. 不同路径
+     * @param m
+     * @param n
+     * @return
+     */
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = i;
+                } else {
+                    dp[i][j] = dp[i-1][j] + dp[i][j-1];
+                }
+            }
+        }
+        return dp[m-1][n-1];
+    }
+
+    /**
+     * 42. 接雨水
+     * 双指针做法
+     * @param height
+     * @return
+     */
+    public static int trap(int[] height) {
+        int n = height.length;
+        int res = 0;
+        int left = 0, right = n - 1;
+        // 左指针的左边最大高度/右指针的右边最大高度
+        int leftMax = height[left], rightMax = height[right];
+        // 最两边的列存不了水
+        left++;
+        right--;
+        while (left <= right) {
+            leftMax = Math.max(leftMax, height[left]);
+            rightMax = Math.max(rightMax, height[right]);
+            if (leftMax < rightMax) {
+                // 左指针的leftMax比右指针的rightMax矮
+                // 说明：左指针的右边至少有一个板子 > 左指针左边所有板子
+                // 根据水桶效应，保证了左指针当前列的水量决定权在左边
+                // 那么可以计算左指针当前列的水量：左边最大高度-当前列高度
+                res += leftMax - height[left];
+                left++;
+            } else {
+                // 右边同理
+                res += rightMax - height[right];
+                right--;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 22. 括号生成
+     * @param n
+     * @return
+     */
+    public static List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        if (n == 0) return res;
+        getParenthesis("", n, n, res);
+        return res;
+    }
+
+    private static void getParenthesis(String n, int left, int right, List<String> res) {
+        if (left == 0 && right == 0) {
+            res.add(n);
+            return;
+        }
+        if (left == right) {
+            getParenthesis(n + "(", left - 1, right, res);
+        } else if (left < right) {
+            if (left > 0) {
+                getParenthesis(n + "(", left - 1, right, res);
+            }
+            getParenthesis(n + ")", left, right -1, res);
+        }
     }
 
     /**
@@ -58,6 +261,56 @@ public class 动态 {
             }
         }
         return s.substring(begin, begin + max);
+    }
+
+    public static String longestPalindrome2(String s) {
+        if (s == null || s.length() <2) {
+            return s;
+        }
+        int len = s.length();
+        int maxStart = 0, maxEnd = 0, maxLen = 1;
+        boolean[][] dp = new boolean[len][len];
+        // dp[l][r] = num[l] == num[r] && dp[l+1][r-1]
+        for (int r = 1; r < len; r++) {
+            for (int l = 0; l < r; l++) {
+                if (s.charAt(l) == s.charAt(r) && ((r-l) <= 2 || dp[l+1][r-1])) {
+                    dp[l][r] = true;
+                    if (r - 1 + 1 > maxLen) {
+                        maxLen = r -l +1;
+                        maxEnd = r;
+                        maxStart = 1;
+                    }
+                }
+            }
+        }
+        return s.substring(maxStart, maxEnd +1);
+    }
+
+    public static String longestPalindrome3(String s) {
+        if (s == null || s.length() <2) {
+            return s;
+        }
+        int len = s.length();
+        int start = 0, end = 0;
+        for (int i =0; i<s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i+1);
+            int maxLen = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (maxLen -1)/2;
+                end = i + maxLen /2;
+            }
+        }
+        return s.substring(start, end +1);
+    }
+
+    private static int expandAroundCenter(String s, int left, int right) {
+        int l = left, r = right;
+        while (l >=0 && r < s.length() && s.charAt(l) == s.charAt(r)) {
+            l--;
+            r++;
+        }
+        return r-l -1;
     }
 
     /**
