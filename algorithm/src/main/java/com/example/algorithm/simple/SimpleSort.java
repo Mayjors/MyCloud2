@@ -394,7 +394,15 @@ public class SimpleSort {
         System.out.print("最小的10个数：");
         for(int i = 0 ; i<=9 ;i++) System.out.print(" " + arr[i]);
     }
-    
+
+    public static void heapInsert(int[] arr, int index) {
+        // 当前位置的数和父节点比较，比父节点大则交换
+        while (arr[index] > arr[(index - 1)/2]) {
+            swap(arr, index, (index -1) /2);
+            index = (index-1)/2;
+        }
+    }
+
     public static void swap(int[] arr, int a, int b) {
         int temp = arr[a];
         arr[a] = arr[b];
