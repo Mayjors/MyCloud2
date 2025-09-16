@@ -145,6 +145,25 @@ public class OfferHot3 {
         return idx;
     }
 
+    public static int removeElement2(int[] nums, int val) {
+        int len = nums.length;
+        int left = 0, right = len-1;
+        while(left < right) {
+            while (left < right && nums[right] == val) {
+                right--;
+            }
+            while (left < right && nums[left] != val) {
+                left++;
+            }
+            if (left < right) {
+                nums[left] = nums[right];
+                left++;
+                right--;
+            }
+        }
+        return nums[left] == val ? left : left+1;
+    }
+
     /**
      * 14. 最长公共前缀
      *
@@ -1827,7 +1846,14 @@ public class OfferHot3 {
      * @return
      */
     public List<List<Integer>> permute(int[] nums) {
-        return null;
+        List<List<Integer>> res = new ArrayList<>();
+
+
+        return res;
+    }
+
+    private void blockTracking(int[] nums, List<List<Integer>> res, Map<Integer, Boolean> visited, List<Integer> list) {
+
     }
 
     /**

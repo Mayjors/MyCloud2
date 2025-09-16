@@ -329,6 +329,56 @@ public class 字符 {
         }
     }
 
+    /**
+     * 128. 最长连续序列
+     * 输入：nums = [100,4,200,1,3,2]
+     * 输出：4
+     * 解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。
+     * @param nums
+     * @return
+     */
+    public int longestConsecutive(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, num);
+        }
+        int ans = 0;
+        for (int num : nums) {
+            if (!map.containsKey(num - 1)) {
+                int cur = num;
+                int curLen = 1;
+                while (map.containsKey(cur + 1)) {
+                    cur++;
+                    curLen++;
+                }
+                ans = Math.max(ans, curLen);
+            }
+        }
+        return ans;
+    }
+
+
+    /**
+     * 49. 字母异位词分组
+     * 输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"
+     * 输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+     * @param strs
+     * @return
+     */
+    public List<List<String>> groupAnagrams2(String[] strs) {
+        List<List<String>> res = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String key = String.valueOf(chars);
+            List<String> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(str);
+            map.put(key, list);
+        }
+        res.addAll(map.values());
+        return res;
+    }
 
     /**
      * 80.删除有序数组中的重复项 II
