@@ -5,6 +5,7 @@ import java.util.*;
 public class OfferHot {
     public static void main(String[] args) {
         productExceptSelf(new int[]{1,2,3,4});
+        trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1});
     }
 
     public int[] twoSum(int[] nums, int target) {
@@ -40,6 +41,9 @@ public class OfferHot {
 
     /**
      * 128. 最长连续序列
+     * 输入：nums = [100,4,200,1,3,2]
+     * 输出：4
+     * 解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4
      * @param nums
      * @return
      */
@@ -69,18 +73,25 @@ public class OfferHot {
      * @param nums
      */
     public void moveZeroes(int[] nums) {
-        int len = nums.length;
-        int left = 0, right = len -1;
-        while (left < right) {
-            if (nums[right] != 0) {
-                nums[left] = nums[right];
-                left++;
+//        int len = nums.length;
+//        int left = 0 , right = 0;
+//        while(right < len) {
+//            if (nums[right] != 0) {
+//                nums[left] = nums[right];
+//                left++;
+//            }
+//            right++;
+//        }
+//        while (left < right) {
+//            nums[left] = 0;
+//            left++;
+//        }
+        int i = 0;
+        for (int j = 0; j<nums.length;  j++) {
+            if (nums[j] != 0) {
+                swap(nums, i, j);
+                i++;
             }
-            right++;
-        }
-        while (left < right) {
-            nums[left] = 0;
-            left++;
         }
     }
 
@@ -115,23 +126,24 @@ public class OfferHot {
         if (nums == null || nums.length <3) {
             return res;
         }
+        int len = nums.length;
         Arrays.sort(nums);
-        for (int i = 0; i<nums.length; i++) {
+        for (int i = 0; i< len; i++) {
             if (nums[i] > 0) {
-                return res;
+                break;
             }
-            if (i>0 && nums[i] == nums[i-1]) {
+            if (i > 0 && nums[i] == nums[i-1]) {
                 continue;
             }
-            int left = i + 1, right = nums.length - 1;
+            int left = i +1, right = len - 1;
             while (left < right) {
                 int sum = nums[i] + nums[left] + nums[right];
                 if (sum == 0) {
                     res.add(Arrays.asList(nums[i], nums[left], nums[right]));
-                    while (left < right && nums[left] == nums[left+1]) {
+                    while (left < right && nums[left] == nums[left +1]) {
                         left++;
                     }
-                    while (left < right && nums[right] == nums[right-1]) {
+                    while (left < right && nums[right] == nums[right -1]) {
                         right--;
                     }
                     left++;
@@ -141,6 +153,30 @@ public class OfferHot {
                 } else {
                     right--;
                 }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 42. 接雨水
+     * @param height
+     * @return
+     */
+    public static int trap(int[] height) {
+        int len = height.length;
+        int left = 0, right = len -1;
+        int max = 0;
+        int res = 0;
+        while (left < right) {
+            if (height[left] < height[right]) {
+                max = Math.max(max, height[left]);
+                res += max - height[left];
+                left++;
+            } else {
+                max = Math.max(max, height[right]);
+                res += max - height[right];
+                right--;
             }
         }
         return res;
@@ -158,6 +194,7 @@ public class OfferHot {
         Map<Character, Integer> map = new HashMap<>();
         while (right < len) {
             if (map.containsKey(s.charAt(right))) {
+                // 上一个出现重复数字的位置的下一个才是重新开始的地方， 所以+1
                 left = Math.max(map.get(s.charAt(right)) +1, left);
             }
             map.put(s.charAt(right), right);
@@ -165,6 +202,76 @@ public class OfferHot {
             right++;
         }
         return max;
+    }
+
+    /**
+     * 76. 最小覆盖子串
+     * @param s
+     * @param t
+     * @return
+     */
+    public String minWindow(String s, String t) {
+        if (s.length() < t.length()) {
+            return "";
+        }
+        int left = 0, right = 0;
+        Map<Character, Integer> sMap = new HashMap<>();
+        Map<Character, Integer> tMap = new HashMap<>();
+        for (char c: t.toCharArray()) {
+            tMap.put(c, tMap.getOrDefault(c, 0) + 1);
+        }
+        int match = 0;
+        int minLen = Integer.MAX_VALUE;
+        int minLeft = 0, minRight = 0;
+        while (right < s.length()) {
+            if (tMap.containsKey(s.charAt(right))) {
+                sMap.put(s.charAt(right), sMap.getOrDefault(s.charAt(right), 0) + 1);
+                if (sMap.get(s.charAt(right)) == tMap.get(s.charAt(right))) {
+                    match++;
+                }
+            }
+            while (match == tMap.size()) {
+                if (right - left + 1 < minLen) {
+                    minLen = right - left + 1;
+                    minLeft = left;
+                    minRight = right;
+                }
+                if (tMap.containsKey(s.charAt(left))) {
+                    sMap.put(s.charAt(left), sMap.get(s.charAt(left)) - 1);
+                    if (sMap.get(s.charAt(left)) < tMap.get(s.charAt(left))) {
+                        match--;
+                    }
+                }
+                left++;
+            }
+            right++;
+        }
+        return minLen == Integer.MAX_VALUE ? "" : s.substring(minLeft, minRight + 1);
+    }
+
+    public String minWindow2(String s, String t) {
+        int[] need = new int[128];
+        for (int i = 0; i < t.length(); i++) {
+            need[t.charAt(i)]++;
+        }
+        int left = 0, right = 0;
+        int start = 0, len = Integer.MAX_VALUE;
+        int count = 0;
+        while (right < s.length()) {
+            if (need[s.charAt(right++)]-- > 0) {
+                count++;
+            }
+            while (count == t.length()) {
+                if (right - left < len) {
+                    len = right - left;
+                    start = left;
+                }
+                if (need[s.charAt(left++)]++ == 0) {
+                    count--;
+                }
+            }
+        }
+        return len == Integer.MAX_VALUE ? "" : s.substring(start, start + len);
     }
 
     /**
@@ -251,16 +358,6 @@ public class OfferHot {
         return ans;
     }
 
-    /**
-     * 76. 最小覆盖子串
-     * @param s
-     * @param t
-     * @return
-     */
-    public String minWindow(String s, String t) {
-
-        return null;
-    }
 
     /**
      * 121. 买卖股票的最佳时机
