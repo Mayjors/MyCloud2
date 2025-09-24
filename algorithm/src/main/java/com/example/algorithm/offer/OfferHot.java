@@ -6,6 +6,8 @@ public class OfferHot {
     public static void main(String[] args) {
         productExceptSelf(new int[]{1,2,3,4});
         trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1});
+        minWindow2("ADOBECODEBANC", "ABC");
+        sortColors2(new int[]{2,0,2,1,1,0});
     }
 
     public int[] twoSum(int[] nums, int target) {
@@ -183,6 +185,31 @@ public class OfferHot {
     }
 
     /**
+     * 69. x 的平方根
+     *
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        if (x == 0) {
+            return 0;
+        }
+        if (x == 1) {
+            return 1;
+        }
+        int left = 1, right = x/2;
+        while (left <= right) {
+            int mid = left + (right - left) /2;
+            if (mid > x / mid) {
+                right = mid -1;
+            } else {
+                left = mid;
+            }
+        }
+        return right;
+    }
+
+    /**
      * 3. 无重复字符的最长子串
      * @param s
      * @return
@@ -249,7 +276,7 @@ public class OfferHot {
         return minLen == Integer.MAX_VALUE ? "" : s.substring(minLeft, minRight + 1);
     }
 
-    public String minWindow2(String s, String t) {
+    public static String minWindow2(String s, String t) {
         int[] need = new int[128];
         for (int i = 0; i < t.length(); i++) {
             need[t.charAt(i)]++;
@@ -434,6 +461,33 @@ public class OfferHot {
     }
 
     /**
+     * 56. 合并区间
+     *
+     * @param intervals
+     * @return
+     */
+    public static int[][] merge(int[][] intervals) {
+        int len = intervals.length;
+        if (len < 2) {
+            return intervals;
+        }
+        Arrays.sort(intervals, Comparator.comparingInt(o -> o[0]));
+        int[][] res = new int[len][2];
+        int index = 0;
+        int[] cur = intervals[0];
+        res[index++] = cur;
+        for (int i = 1; i< len; i++) {
+            if (cur[1] >= intervals[i][0]) {
+                cur[1] = Math.max(cur[1], intervals[i][1]);
+            } else {
+                cur = intervals[i];
+                res[index++] = cur;
+            }
+        }
+        return Arrays.copyOf(res, index);
+    }
+
+    /**
      * 160. 相交链表
      * @param headA
      * @param headB
@@ -465,6 +519,27 @@ public class OfferHot {
             cur = next;
         }
         return pre;
+    }
+
+    /**
+     * 328. 奇偶链表
+     * @param head
+     * @return
+     */
+    public ListNode oddEvenList(ListNode head) {
+        if (head == null) {
+            return head;
+        }
+        ListNode evenHead = head.next;
+        ListNode odd = head, even = evenHead;
+        while (even != null && even.next != null) {
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+            even = even.next;
+        }
+        odd.next = evenHead;
+        return head;
     }
 
     /**
@@ -545,6 +620,32 @@ public class OfferHot {
             cur.next = new ListNode(count);
         }
         return pre.next;
+    }
+
+    /**
+     * 61. 旋转链表
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode rotateRight(ListNode head, int k) {
+        if (k == 0 || head == null || head.next == null) {
+            return head;
+        }
+        int len = 1;
+        ListNode tail = head;
+        while (tail.next != null) {
+            tail = tail.next;
+            len++;
+        }
+        tail.next = head;
+        k = k % len;
+        for (int i = 0; i < len - k; i++) {
+            tail = tail.next;
+        }
+        head = tail.next;
+        tail.next = null;
+        return head;
     }
 
     /**
@@ -745,6 +846,40 @@ public class OfferHot {
     }
 
     /**
+     * 29. 两数相除
+     *
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public static int divide(int dividend, int divisor) {
+        if (dividend == 0) {
+            return 0;
+        }
+        if (divisor == 1) {
+            return dividend;
+        }
+        if (divisor == -1) {
+            if (dividend > Integer.MIN_VALUE) {
+                return -dividend;
+            } else {
+                return Integer.MAX_VALUE;
+            }
+        }
+        boolean flag = (dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0);
+        dividend = Math.abs(dividend);
+        divisor = Math.abs(divisor);
+        int res = 0;
+        for (int i = 31; i >= 0; i--) {
+            if ((dividend >> i) >= divisor) {
+                res += 1 << i;
+                dividend -= divisor << i;
+            }
+        }
+        return flag ? res : -res;
+    }
+
+    /**
      * 22. 括号生成
      * @param n
      * @return
@@ -863,6 +998,22 @@ public class OfferHot {
                 right--;
             } else {
                 i++;
+            }
+        }
+    }
+
+    public static void sortColors2(int[] nums) {
+        int a = 0, b = 0;
+        for (int i=0; i<nums.length; i++) {
+            int num = nums[i];
+            nums[i] = 2;
+            if (num < 2) {
+                nums[b]=1;
+                b++;
+            }
+            if (num<1) {
+                nums[a] = 0;
+                a++;
             }
         }
     }

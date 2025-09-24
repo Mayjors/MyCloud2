@@ -184,7 +184,7 @@ public class OfferHot2 {
     }
 
     /**
-     * 两数相除
+     * 29. 两数相除
      *
      * @param dividend
      * @param divisor
@@ -550,12 +550,14 @@ public class OfferHot2 {
 
     /**
      * 152. 乘积最大子数组
-     *
+     * 输入: nums = [2,3,-2,4]
+     * 输出: 6
+     * 解释: 子数组 [2,3] 有最大乘积 6
      * @param nums
      * @return
      */
     public static int maxProduct(int[] nums) {
-        int max = Integer.MAX_VALUE, imax = 1, imin = 1;
+        int max = Integer.MIN_VALUE, imax = 1, imin = 1;
         for (int i = 0; i <= nums.length; i++) {
             if (nums[i] < 0) {
                 int tmp = imax;
