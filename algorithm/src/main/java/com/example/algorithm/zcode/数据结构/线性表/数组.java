@@ -201,6 +201,22 @@ public class 数组 {
         }
     }
 
+    public int[] plusOne3(int[] digits) {
+        int len = digits.length;
+        for (int i = len -1; i>=0; i--) {
+            if (digits[i] != 9) {
+                digits[i]++;
+                return digits;
+            } else {
+                digits[i] = 0;
+            }
+        }
+        // 数组中每个元素均为9
+        int[] res = new int[digits.length + 1];
+        res[0] = 1;
+        return res;
+    }
+
     public int[] plusOne2(int[] digits) {
         int len = digits.length;
         for (int i = len - 1; i>= 0 ; i--) {

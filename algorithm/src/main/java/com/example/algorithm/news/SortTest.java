@@ -1,7 +1,5 @@
 package com.example.algorithm.news;
 
-import com.example.algorithm.offer.排序;
-
 import java.util.Arrays;
 
 public class SortTest {
