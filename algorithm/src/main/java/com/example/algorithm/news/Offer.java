@@ -539,6 +539,230 @@ public class Offer {
         return head;
     }
 
+    /**
+     * 83. 删除排序链表中的重复元素
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode cur = head;
+        while (cur.next != null) {
+            if (cur.next.val == cur.val) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * 82. 删除排序链表中的重复元素 II
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode cur = dummy;
+        while (cur.next != null && cur.next.next != null) {
+            if (cur.next.val == cur.next.next.val) {
+                int val = cur.next.val;
+                while (cur.next != null && cur.next.val == val) {
+                    cur.next = cur.next.next;
+                }
+            } else {
+                cur = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    /**
+     * 147. 对链表进行插入排序
+     * @param head
+     * @return
+     */
+    public ListNode insertionSortList(ListNode head) {
+        // 1.首先判断给定的链表是否为空，若为空，则不需要进行排序，直接返回
+        if (head == null) {
+            return head;
+        }
+        // 2.链表初始化操作
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode lastSorted = head;
+        ListNode cur = head.next;
+        // 3.开始排序
+        while (cur != null) {
+            // 说明curr应该位于lastSorted之后
+            if (lastSorted.val <= cur.val) {
+                lastSorted = lastSorted.next;   // 将lastSorted后移一位,curr变成新的lastSorted
+            } else {
+                ListNode prev = dummy;
+                // 从前往后找到合适的位置
+                while (prev.next.val <= cur.val) {
+                    prev = prev.next;
+                }
+                // 将cur插入到prev和prev.next之间
+                lastSorted.next = cur.next;
+                cur.next = prev.next;
+                prev.next = cur;
+            }
+        }
+        return dummy.next;
+    }
+
+    /**
+     * 147. 对链表进行插入排序
+     * @param head
+     * @return
+     */
+    public ListNode insertionSortList2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        head.next = insertionSortList2(head.next);
+        ListNode cur = head.next;
+        ListNode prev = head;
+        while (prev.next != null && prev.next.val < head.val) {
+            prev = prev.next;
+        }
+        if (prev != head) {
+            head.next = cur.next;
+            cur.next = prev.next;
+            prev.next = cur;
+        }
+        return prev;
+    }
+
+    /**
+     * 2487. 从链表中移除节点
+     * @param head
+     * @return
+     */
+    public ListNode removeNodes(ListNode head) {
+        ListNode listNode = reverseList(head);
+        for (ListNode cur = listNode; cur != null && cur.next != null; cur = cur.next) {
+            if (cur.val == cur.next.val) {
+                cur.next = cur.next.next;
+            }
+        }
+        return reverseList(listNode);
+    }
+
+    /**
+     * 1669. 合并两个链表
+     * @param list1
+     * @param a
+     * @param b
+     * @param list2
+     * @return
+     */
+    public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
+        if (list1 == null || list2 == null) {
+            return null;
+        }
+        ListNode cur = list1;
+        for (int i = 0; i < a-1; i++) {
+            cur = cur.next;
+        }
+        ListNode next = cur.next;
+        cur.next = list2;
+        while (cur.next != null) {
+            cur = cur.next;
+        }
+        for (int i =0; i < b-1; i++) {
+            next = next.next;
+        }
+        cur.next = next;
+        return list1;
+    }
+
+    /**
+     * 3217. 从链表中移除在数组中存在的节点
+     * @param nums
+     * @param head
+     * @return
+     */
+    public ListNode modifiedList(int[] nums, ListNode head) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            set.add(num);
+        }
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        cur.next = head;
+        while (cur.next != null) {
+            if (set.contains(cur.next.val)) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    /**
+     * 203. 移除链表元素
+     * @param head
+     * @param val
+     * @return
+     */
+    public ListNode removeElements(ListNode head, int val) {
+        if (head == null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode cur = dummy;
+        while (cur.next != null) {
+            if (cur.next.val == val) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return dummy.next;
+    }
+
+    /**
+     * 23. 合并K个升序链表
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) {
+            return null;
+        }
+        int len = lists.length;
+        ListNode dummy = new ListNode(0);
+        ListNode tail = dummy;
+        while (true) {
+            int min = Integer.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < len; i++) {
+                if (lists[i] != null && lists[i].val < min) {
+                    min = lists[i].val;
+                    minIndex = i;
+                }
+            }
+            if (minIndex == -1) {
+                break;
+            }
+            tail.next = lists[minIndex];
+            tail = tail.next;
+            lists[minIndex] = lists[minIndex].next;
+        }
+        return dummy.next;
+    }
+    
     /*****************************************/
     /****************动态规划******************/
     /*****************************************/

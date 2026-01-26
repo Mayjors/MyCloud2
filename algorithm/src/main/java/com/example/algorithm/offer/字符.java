@@ -1753,6 +1753,22 @@ public class 字符 {
         return right - left + 1;
     }
 
+    public int minSubArrayLen2(int target, int[] nums) {
+        int min = Integer.MIN_VALUE;
+        int left = 0, right = 0;
+        int sum = 0;
+        while (right < nums.length) {
+            sum += nums[right];
+            right++;
+            while (sum >= target) {
+                min = Math.min(min, right - left);
+                sum = sum - nums[left];
+                left++;
+            }
+        }
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+
     /**
      * 4. 寻找两个正序数组的中位数
      * 归并算法
