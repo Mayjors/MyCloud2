@@ -540,6 +540,32 @@ public class Hot {
     }
 
     /**
+     * 190. 颠倒二进制位
+     * @param n
+     * @return
+     */
+    public int reverseBits(int n) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            ans <<= 1;
+            ans |= n & 1;
+            n >>= 1;
+        }
+        return ans;
+    }
+
+    public int reverseBits2(int n) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int t = (n >> i) & 1;
+            if (t == 1) {
+                ans |= t << (31 - i);
+            }
+        }
+        return ans;
+    }
+
+    /**
      * 128. 最长连续序列
      * @param nums
      * @return

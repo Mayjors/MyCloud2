@@ -42,6 +42,29 @@ public class TopListNode {
     }
 
     /**
+     * 142. 环形链表 II
+     *
+     * @param head
+     * @return
+     */
+    public ListNode detectCycle(ListNode head) {
+        ListNode fast = head, slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
+                slow = head;
+                while (fast != slow) {
+                    fast = fast.next;
+                    slow = slow.next;
+                }
+                return slow;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 2. 两数相加
      *
      * @param l1
@@ -96,6 +119,49 @@ public class TopListNode {
             cur = cur.next;
         }
         cur.next = list1 == null ? list2 : list1;
+        return dummy.next;
+    }
+
+    /**
+     * 23. 合并K个升序链表
+     *
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+        return mergeKListsHelper(lists, 0, lists.length - 1);
+    }
+
+    private ListNode mergeKListsHelper(ListNode[] lists, int left, int right) {
+        if (left == right) return lists[left];
+        int mid = left + (right - left) / 2;
+        ListNode l1 = mergeKListsHelper(lists, left, mid);
+        ListNode l2 = mergeKListsHelper(lists, mid + 1, right);
+        return mergeTwoLists(l1, l2);
+    }
+
+    public ListNode mergeKLists2(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+        ListNode dummy = new ListNode();
+        ListNode cur = dummy;
+        while (true) {
+            ListNode minNode = null;
+            int minIndex = -1;
+            for (int i = 0; i < lists.length; i++) {
+                if (lists[i] != null && (minNode == null || lists[i].val < minNode.val)) {
+                    minNode = lists[i];
+                    minIndex = i;
+                }
+            }
+            if (minIndex != -1) {
+                cur.next = minNode;
+                cur = cur.next;
+                lists[minIndex] = lists[minIndex].next;
+            } else {
+                break;
+            }
+        }
         return dummy.next;
     }
 
@@ -184,6 +250,28 @@ public class TopListNode {
      * @return
      */
     public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        
+        ListNode cur = head;
+        while (cur != null && cur.next != null) {
+            if (cur.next.val == cur.val) {
+                cur.next = cur.next.next;
+            } else {
+                cur = cur.next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * 82. 删除排序链表中的重复元素 II
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates2(ListNode head) {
         if (head == null || head.next == null) {
             return head;
         }
@@ -284,5 +372,34 @@ public class TopListNode {
         ListNode right = sortList(mid);
         return mergeTwoLists(left, right);
     }
+
+    /**
+     * 160. 相交链表
+     *
+     * @param headA
+     * @param headB
+     * @return
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        ListNode a = headA, b = headB;
+        while (a != b) {
+            a = a == null ? headB : a.next;
+            b = b == null ? headA : b.next;
+        }
+        return a;
+    }
+
+    
+    /**
+     * 143. 重排链表
+     *
+     * @param head
+     */
+    public void reorderList(ListNode head) {
+       
+
+    }
+
 
 }

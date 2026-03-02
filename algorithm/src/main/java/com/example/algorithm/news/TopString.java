@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.Stack;
 
 public class TopString {
 
@@ -17,6 +19,59 @@ public class TopString {
         System.out.println(topString.hIndex(new int[] {3, 0, 6, 1, 5}));
         System.out.println(topString.candy(new int[] {1, 0, 2}));
         System.out.println(topString.candy2(new int[] {1, 0, 2}));
+        int[] nums = new int[] {0, 2, 0, 2, 1, 1, 1, 0};
+        topString.sortColors(nums);
+        System.out.println(Arrays.toString(nums));
+        System.out.println(topString.isValid("()[]{}"));
+        System.out.println(topString.longestCommonPrefix(new String[] {"flower", "flow", "flight"}));
+        System.out.println(topString.minWindow("ADOBECODEBANC", "ABC"));
+        System.out.println(topString.subsets(new int[] {1, 2, 3}));
+        System.out.println(topString.subsets2(new int[] {1, 2, 3}));
+        
+    }
+
+    /**
+     * 1. 两数之和
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])) {
+                return new int[] {map.get(target - nums[i]), i};
+            } else{
+                map.put(nums[i], i);
+            }
+        }
+        return new int[] {0};
+    }
+
+    /**
+     * 75. 颜色分类
+     *
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        for (int i = 0; i <= right; i++) {
+            if (nums[i] == 0) {
+                if (left == i) {
+                    left++;
+                } else{
+                    int temp = nums[i];
+                    nums[i] = nums[left];
+                    nums[left++] = temp;
+                }
+            } else if (nums[i] == 2) {
+                int temp = nums[i];
+                nums[i] = nums[right];
+                nums[right--] = temp;
+                i--;
+            }
+        }
     }
 
     /**
@@ -42,6 +97,142 @@ public class TopString {
     }
 
     /**
+     * 15. 三数之和
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i< nums.length; i++) {
+            if (nums[i] > 0) break;
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            int left = i + 1, right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                if (sum == 0) {
+                    res.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    while (left < right && nums[left] == nums[left+1]) left++;
+                    while (left < right && nums[right] == nums[right-1]) right--;
+                    left++;
+                    right--;
+                } else if (sum < 0) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 16. 最接近的三数之和
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int res = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.length; i++) {
+            int left = i + 1, right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                if (Math.abs(sum - target) < Math.abs(res - target)) {
+                    res = sum;
+                }
+                if (sum < target) {
+                    left++;
+                } else if (sum > target) {
+                    right--;
+                } else {
+                    return res;
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 31. 下一个排列
+     *
+     * @param nums
+     */
+    public static void nextPermutation(int[] nums) {
+        int n = nums.length;
+        int i = n - 2;
+        while (i >= 0 && nums[i] >= nums[i+1]) {
+            i--;
+        }
+        if (i >= 0) {
+            int j = n - 1;
+            while (j >= 0 && nums[j] <= nums[i]) {
+                j--;
+            }
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+        int left = i + 1, right = n - 1;
+        while (left < right) {
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    /**
+     * 287. 寻找重复数
+     *
+     * @param nums
+     * @return
+     */
+    public int findDuplicate(int[] nums) {
+        int len = nums.length;
+        int left = 1, right = len - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            int cnt = 0;
+            for (int num : nums) {
+                if (num <= mid) {
+                    cnt++;
+                }
+            }
+            if (cnt <= mid) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 49. 字母异位词分组
+     *
+     * @param strs
+     * @return
+     */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String key = new String(chars);
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
+            }
+            map.get(key).add(str);
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
      * 27. 移除元素
      *
      * @param nums
@@ -49,13 +240,56 @@ public class TopString {
      * @return
      */
     public int removeElement(int[] nums, int val) {
-        int idx = 0;
-        for (int n : nums) {
-            if (n != val) {
-                nums[idx++] = n;
+        // int idx = 0;
+        // for (int n : nums) {
+        //     if (n != val) {
+        //         nums[idx++] = n;
+        //     }
+        // }
+        // return idx;
+        int slow = 0, fast = 0;
+        while (fast < nums.length) {
+            if (nums[fast] != val) {
+                nums[slow] = nums[fast];
+                slow++;
+            }
+            fast++;
+        }
+        return slow;
+    }
+
+    /**
+     * 190. 颠倒二进制位
+     * @param n
+     * @return
+     */
+    public int reverseBits(int n) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int t = (n >> i) & 1;
+            if (t == 1) {
+                ans |= t << (31 - i);
             }
         }
-        return idx;
+        return ans;
+    }
+
+    /**
+     * 191.位1的个数
+     * @param n
+     * @return
+     */
+    public int hammingWeight(int n) {
+        int ans = 0;
+        // while (n != 0) {
+        //     ans += n & 1;
+        //     n>>>=1;
+        // }
+        while (n != 0) {
+            n = n & (n -1);
+            ans++;
+        }
+        return ans;
     }
 
     /**
@@ -283,6 +517,27 @@ public class TopString {
     }
 
     /**
+     * 560. 和为 K 的子数组
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int subarraySum(int[] nums, int k) {
+        int count = 0, sum = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (map.containsKey(sum - k)) {
+                count += map.get(sum - k);
+            }
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        return count;
+    }
+
+    /**
      * 58. 最后一个单词的长度
      *
      * @param s
@@ -323,6 +578,69 @@ public class TopString {
         }
         
         return sb.toString().trim();
+    }
+
+    /**
+     * 283. 移动零
+     *
+     * @param nums
+     */
+    public void moveZeroes(int[] nums) {
+        int len = nums.length;
+        int left = 0, right = 0;
+        while (right < len) {
+            if (nums[right] != 0) {
+                nums[left] = nums[right];
+                left++;
+            }
+            right++;
+        }
+        while (left < len) {
+            nums[left] = 0;
+            left++;
+        }
+    }
+
+    /**
+     * 20. 有效的括号
+     *
+     * @param s
+     * @return
+     */
+    public boolean isValid(String s) {
+        if (s.isEmpty()) return true;
+        Stack<Character> start = new Stack<>();
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[') {
+                start.push(c);
+            } else {
+                if (start.isEmpty()) return false;
+                char top = start.pop();
+                if (c == ')' && top != '(') return false;
+                if (c == '}' && top != '{') return false;
+                if (c == ']' && top != '[') return false;
+            }
+        }
+        return start.isEmpty();
+    }
+
+    /**
+     * 14. 最长公共前缀
+     *
+     * @param strs
+     * @return
+     */
+    public String longestCommonPrefix(String[] strs) {
+        if (strs == null || strs.length == 0) {
+            return "";
+        }
+        String prefix = strs[0];
+        for (int i = 1; i< strs.length; i++) {
+            while (strs[i].indexOf(prefix) != 0) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+            }
+        }
+        return prefix;
     }
 
     /**
@@ -395,6 +713,46 @@ public class TopString {
     }
 
     /**
+     * 896. 单调数列
+     *
+     * @param nums
+     * @return
+     */
+    public boolean isMonotonic(int[] nums) {
+        int len = nums.length;
+        boolean increasing = true;
+        boolean decreasing = true;
+        for (int i = 0; i < len - 1; i++) {
+            if (nums[i] > nums[i+1]) {
+                increasing = false;
+            }
+            if (nums[i] < nums[i+1]) {
+                decreasing = false;
+            }
+        }
+        return increasing || decreasing;
+    }
+
+    /**
+     * 1332. 删除回文子序列
+     *
+     * @param s
+     * @return
+     */
+    public int removePalindromeSub(String s) {
+        if (s.length() == 0) {
+            return 0;
+        }
+        int len = s.length();
+        for (int i = 0; i < len / 2; i++) {
+            if (s.charAt(i) != s.charAt(len - 1 - i)) {
+                return 2;
+            }
+        }
+        return 1;
+    }
+
+    /**
      * 11. 盛最多水的容器
      *
      * @param height
@@ -412,6 +770,41 @@ public class TopString {
             }
         }
         return max;
+    }
+
+    /**
+     * 76. 最小覆盖子串
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public String minWindow(String s, String t) {
+        int[] need = new int[256];
+        int left = 0, right = 0;
+        int valid = 0;
+        int start = 0, len = Integer.MAX_VALUE;
+        while (right < s.length()) {
+            char c = s.charAt(right);
+            need[c]++;
+            if (need[c] == 1) {
+                valid++;
+            }
+            right++;
+            while (valid == t.length()) {
+                if (right - left < len) {
+                    start = left;
+                    len = right - left;
+                }
+                char d = s.charAt(left);
+                need[d]--;
+                if (need[d] == 0) {
+                    valid--;
+                }
+                left++;
+            }
+        }
+        return len == Integer.MAX_VALUE ? "" : s.substring(start, start + len);
     }
 
     /**
@@ -458,6 +851,36 @@ public class TopString {
         }
         return max;
     }
+    
+    /**
+     * 5. 最长回文子串
+     *
+     * @param s
+     * @return
+     */
+    public String longestPalindrome(String s) {
+        if (s == null || s.isEmpty()) return "";
+        int max = 0;
+        int left = 0, right = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i + 1);
+            max = Math.max(max, Math.max(len1, len2));
+            if (max > right - left) {
+                left = i - (max - 1) / 2;
+                right = i + max / 2;
+            }
+        }
+        return s.substring(left, right + 1);
+    }
+
+    private int expandAroundCenter(String s, int left, int right) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
+    }
 
     /**
      * 54. 螺旋矩阵
@@ -491,11 +914,155 @@ public class TopString {
             rows--;
             cols--;
         }
-        
+    
         return res;
     }
 
+    /**
+     * 69. x 的平方根
+     *
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        if (x == 0) return 0;
+        int left = 1, right = x;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (mid == x / mid) {
+                return mid;
+            } else if (mid < x / mid) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return right;
+    }
 
+    /**
+     * 137. 只出现一次的数字 II
+     *
+     * @param nums
+     * @return
+     */
+    public int singleNumber(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int total = 0;
+            for (int num : nums) {
+                total += (num >> i) & 1;
+            }
+            if (total % 3 != 0) {
+                ans |= (1 << i);
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 78. 子集
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>());
+        for (int num : nums) {
+            int size = res.size();
+            for (int i = 0; i< size; i++) {
+                List<Integer> list = new ArrayList<>(res.get(i));
+                list.add(num);
+                res.add(list);
+            }
+        }
+        return res;
+    }
+
+    public List<List<Integer>> subsets2(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        for(int i=0; i<(1<<nums.length);i++) {
+            List<Integer> list = new ArrayList<>();
+            for(int j=0; j<nums.length; j++) {
+                if(((i>>j) & 1)==1) {
+                    list.add(nums[j]);
+                    System.out.println(list);
+                }
+            }
+            res.add(list);
+        }
+        return res;
+    }
+
+    /**
+     * 39. 组合总和
+     * @param candidates
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        dfs(candidates, target, 0, new ArrayList<>(), res);
+        return res;
+    }
+
+    private void dfs(int[] candidates, int target, int start, List<Integer> list, List<List<Integer>> res) {
+        if (target < 0) return;
+        if (target == 0) {
+            res.add(new ArrayList<>(list));
+            return;
+        }
+        for (int i = start; i < candidates.length; i++) {
+            list.add(candidates[i]);
+            dfs(candidates, target - candidates[i], i, list, res);
+            list.remove(list.size() - 1);
+        }
+    }
+
+    /**
+     * 22. 括号生成
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        dfs(n, n, "", res);
+        return res;
+    }
+
+    private void dfs(int left, int right, String s, List<String> res) {
+        if (left == 0 && right == 0) {
+            res.add(s);
+            return;
+        }
+        if (left > 0) {
+            dfs(left - 1, right, s + "(", res);
+        }
+        if (right > left) {
+            dfs(left, right - 1, s + ")", res);
+        }
+    }
+
+    /**
+     * 56. 合并区间
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length == 0) return new int[0][];
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> list = new ArrayList<>();
+        list.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            int[] last = list.get(list.size() - 1);
+            if (last[1] >= intervals[i][0]) {
+                last[1] = Math.max(last[1], intervals[i][1]);
+            } else {
+                list.add(intervals[i]);
+            }
+        }
+        return list.toArray(new int[list.size()][]);
+    }
 
     /*************************哈希表*******************************/
 
@@ -623,6 +1190,201 @@ public class TopString {
             set.add(n);
         }
         return true;
+    }
+
+    /*****************二分查找******************* */
+
+    /**
+     * 35. 搜索插入位置
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) /2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid -1;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 74. 搜索二维矩阵
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length, n = matrix[0].length;
+        // int left = 0, right = m * n -1;
+        // while (left <= right) {
+        //     int mid = left + (right - left) /2;
+        //     int row = mid /n, col = mid % n;
+        //     if (matrix[row][col] == target) {
+        //         return true;
+        //     } else if (matrix[row][col] < target) {
+        //         left = mid + 1;
+        //     } else {
+        //         right = mid -1;
+        //     }
+        // }
+        // return false;
+        int row = matrix.length - 1, col = 0;
+        while (row >= 0 && col < n) {
+            if (matrix[row][col] == target) {
+                return true;
+            } else if (matrix[row][col] < target) {
+                col++;
+            } else {
+                row--;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 162. 寻找峰值
+     *
+     * @param nums
+     * @return
+     */
+    public int findPeakElement(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] > nums[mid + 1]) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    /**
+     * 33. 搜索旋转排序数组
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) /2;
+            if (nums[mid] == target) {
+                return mid;
+            }
+            if (nums[mid] >= nums[left]) {
+                if (target >= nums[left] && target < nums[mid]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 34. 在排序数组中查找元素的第一个和最后一个位置
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[]{-1, -1};
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left)/2;
+            if (nums[mid] == target) {
+                left = mid;
+                right = mid;
+                while (left > 0 && nums[left] == target) {
+                    left--;
+                }
+                while (right < nums.length && nums[right] == target) {
+                    right++;
+                }
+                res[0] = left;
+                res[1] = right;
+                return res;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 347. 前 K 个高频元素
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());
+        pq.addAll(map.entrySet());
+        int[] res = new int[k];
+        for (int i = 0; i < k; i++) {
+            res[i] = pq.poll().getKey();
+        }
+        return res;
+    }
+
+    public int[] topKFrequent2(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            if (!map.containsKey(num)) {
+                map.put(num, 1);
+            } else {
+                map.put(num, map.get(num) + 1);
+            }
+        }
+        List<Integer>[] buckets = new List[nums.length + 1];
+        for (int key : map.keySet()) {
+            int freq = map.get(key);
+            if (buckets[freq] == null) {
+                buckets[freq] = new ArrayList<>();
+            }
+            buckets[freq].add(key);
+        }
+        int[] res = new int[k];
+        int index = 0;
+        for (int i = buckets.length - 1; i >= 0; i--) {
+            if (buckets[i] != null) {
+                for (int num : buckets[i]) {
+                    res[index++] = num;
+                    if (index == k) {
+                        return res;
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     /**
