@@ -27,6 +27,7 @@ public class TopString {
         System.out.println(topString.minWindow("ADOBECODEBANC", "ABC"));
         System.out.println(topString.subsets(new int[] {1, 2, 3}));
         System.out.println(topString.subsets2(new int[] {1, 2, 3}));
+        System.out.println(topString.lengthOfLongestSubstring("abcbacbb"));
         
     }
 
@@ -835,19 +836,21 @@ public class TopString {
      * @return
      */
     public int lengthOfLongestSubstring(String s) {
-        if (s == null || s.isEmpty()) return 0;
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
         int max = 0;
         int left = 0, right = 0;
         Set<Character> set = new HashSet<>();
         while (right < s.length()) {
-           if (set.contains(s.charAt(right))) {
+            if (set.contains(s.charAt(right))) {
                 set.remove(s.charAt(left));
                 left++;
-           } else {
+            } else {
                 set.add(s.charAt(right));
                 max = Math.max(max, set.size());
                 right++;
-           } 
+            }
         }
         return max;
     }
@@ -1448,6 +1451,34 @@ public class TopString {
             stringBuilder.deleteCharAt(i);
         }
     }
+
+    /**
+     * 443. 压缩字符串
+     *
+     * @param chars
+     * @return
+     */
+    public int compress(char[] chars) {
+        int index = 0;
+        int i = 0;
+        while (i < chars.length) {
+            char c = chars[i];
+            int count = 0;
+            while (i < chars.length && chars[i] == c) {
+                i++;
+                count++;
+            }
+            chars[index++] = c;
+            if (count > 1) {
+                for (char digit : Integer.toString(count).toCharArray()) {
+                    chars[index++] = digit;
+                }
+            }
+        }
+        return index;
+    }
+
+
 
     private void reverse(int[] nums, int i, int j) {
         while (i < j) {

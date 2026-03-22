@@ -266,4 +266,36 @@ public class TopDp {
         }
     }
 
+    /**
+     * 289. 生命游戏
+     *
+     * @param board
+     */
+    public void gameOfLife(int[][] board) {
+        int[][] copy = new int[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                copy[i][j] = board[i][j];
+            }
+        }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                int liveNeighbors = 0;
+                for (int x = Math.max(0, i - 1); x <= Math.min(board.length - 1, i + 1); x++) {
+                    for (int y = Math.max(0, j - 1); y <= Math.min(board[0].length - 1, j + 1); y++) {
+                        if (copy[x][y] == 1) {
+                            liveNeighbors++;
+                        }
+                    }
+                }
+                if (copy[i][j] == 1 && (liveNeighbors < 2 || liveNeighbors > 3)) {
+                    board[i][j] = 0;
+                } else if (copy[i][j] == 0 && liveNeighbors == 3) {
+                    board[i][j] = 1;
+                }
+            }
+        }
+    }
+
+
 }
